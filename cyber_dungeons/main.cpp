@@ -6,19 +6,47 @@
 
 struct Body {
     Rectangle rect;
-    float y_speed;
+    float vertical_speed;
 
     Body(float x, float y, float width, float height, float vertical_speed) : 
         rect{ x, y, width, height }, 
-        y_speed(vertical_speed)
+        vertical_speed(vertical_speed)
     {}
+
+    void setPosition(float x, float y)
+    {
+        rect.x = x;
+        rect.y = y;
+    }
+
+    void setVerticalSpeed(float speed)
+    {
+        vertical_speed = speed;
+    }
+
+    float getVerticalSpeed() const
+    {
+        return vertical_speed;
+    }
+
+    void move(float dx, float dy)
+    {
+        rect.x += dx;
+        rect.y += dy;
+    }
+
+    Rectangle getRect() const
+    {
+        return rect;
+    }
+
 };
 
 class Player
 {
 private:
     float speed;
-    float max_terminal_y_speed;
+    float max_falling_speed;
     float jumping_speed;
     float gravity;
     Body body;
@@ -29,31 +57,30 @@ public:
         JUMPING,
         FALLING
     };
-    Player::State currentState;
+    Player::State current_state;
 
     Player(float x, float y, float width, float height) : 
         body(x, y, width, height, 0.f),
         speed(5.f), 
         gravity(0.1f), 
-        max_terminal_y_speed(10.f), 
+        max_falling_speed(10.f), 
         jumping_speed(-3.f),
-        currentState(FALLING) {}
+        current_state(FALLING) {}
 
     void render() const
     {
         displayDebug();
-        DrawRectangle(body.rect.x, body.rect.y, body.rect.width, body.rect.height, RED);
+        DrawRectangle(body.getRect().x, body.getRect().y, body.getRect().width, body.getRect().height, RED);
     }
 
     Rectangle getRect()
     {
-        return body.rect;
+        return body.getRect();
     }
 
     void setPosition(float x, float y)
     {
-        body.rect.x = x;
-        body.rect.y = y;
+        body.setPosition(x, y);
     }
 
     void update()
@@ -64,74 +91,75 @@ public:
 
     void updateSpeed()
     {
-        if (body.y_speed < max_terminal_y_speed)
+        if (body.getVerticalSpeed() < max_falling_speed)
         {
-            body.y_speed += gravity;
+            auto updatedVerticalSpeed = body.getVerticalSpeed() + gravity;
+            body.setVerticalSpeed(updatedVerticalSpeed);
         }
     }
 
     void updatePosition()
     {
-        body.rect.y += body.y_speed;
+        body.move(0, body.getVerticalSpeed());
     }
 
     void getData() const
     {
-        std::cout << "float x_position: " << body.rect.x << std::endl;
-        std::cout << "float y_position: " << body.rect.y << std::endl;
-        std::cout << "width: " << body.rect.width << std::endl;
-        std::cout << "height: " << body.rect.height << std::endl;
+        std::cout << "float x_position: " << body.getRect().x << std::endl;
+        std::cout << "float y_position: " << body.getRect().y << std::endl;
+        std::cout << "width: " << body.getRect().width << std::endl;
+        std::cout << "height: " << body.getRect().height << std::endl;
     }
 
     void input()
     {
         if (IsKeyDown(KEY_LEFT))
         {
-            body.rect.x = body.rect.x - speed;
+            body.setPosition(body.getRect().x - speed, body.getRect().y);
         }
         if (IsKeyDown(KEY_RIGHT))
         {
-            body.rect.x = body.rect.x + speed;
+            body.setPosition(body.getRect().x + speed, body.getRect().y);
         }
-        if (IsKeyDown(KEY_SPACE))
+        if (IsKeyDown(KEY_Z))
         {
-            if (currentState == State::ON_GROUND)
+            if (current_state == State::ON_GROUND)
             {
                 setState(State::JUMPING);
-                body.y_speed = jumping_speed;
+                body.setVerticalSpeed(jumping_speed);
             }
         }
     }
 
     void displayDebug() const
     {
-        DrawText("vertical_speed: ", 20, 20, 16, LIGHTGRAY);
-        DrawText(std::to_string(body.y_speed).c_str(), 150, 20, 16, LIGHTGRAY);
+        //DrawText("vertical_speed: ", 20, 20, 16, LIGHTGRAY);
+        //DrawText(std::to_string(body.getVerticalSpeed()).c_str(), 150, 20, 16, LIGHTGRAY);
     }
 
-    void setYSpeed(float speed)
+    void setVerticalSpeed(float speed)
     {
-        body.y_speed = speed;
+        body.setVerticalSpeed(speed);
     }
 
-    float getYSpeed() const
+    float getVerticalSpeed() const
     {
-        return body.y_speed;
+        return body.getVerticalSpeed();
     }
 
     Rectangle getRect() const
     {
-        return body.rect;
+        return body.getRect();
     }
 
     void setState(enum State state)
     {
-        currentState = state;
+        current_state = state;
     }
 
     enum State getState() const
     {
-        return currentState;
+        return current_state;
     }
 };
 
@@ -178,7 +206,7 @@ public:
             if (resolveVerticalFallingCollision(player, platform, playerPreviousRect))
             {
                     player.setState(Player::ON_GROUND);
-                    player.setYSpeed(0);
+                    player.setVerticalSpeed(0);
                     player.setPosition(player.getRect().x, platform.rect.y - player.getRect().height);
 
                     setCollidedPlatformRect(platform.rect);
@@ -229,7 +257,7 @@ public:
         if (isPlayerHorizontallyAligned
             && previousPlayerBottom  <= platform.rect.y
             && currentPlayerBottom  > platform.rect.y
-            && player.getYSpeed() > 0
+            && player.getVerticalSpeed() > 0
            )
         {
             return true;
@@ -243,7 +271,7 @@ public:
         collided_platform_rect = rect;
     }
 
-    bool isPlayerStillOnPlatform(Rectangle player_rect, Rectangle collided_plaform_rect)
+    bool isPlayerStillOnPlatform(Rectangle player_rect, Rectangle collided_plaform_rect) const
     {
         if (!(player_rect.x + player_rect.width > collided_platform_rect.x && player_rect.x < collided_platform_rect.x + collided_platform_rect.width))
         {
