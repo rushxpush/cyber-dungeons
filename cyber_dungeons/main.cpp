@@ -10,6 +10,7 @@ private:
     float speed;
     float y_speed;
     float max_terminal_y_speed;
+    float jumping_speed;
     float gravity;
 
 public:
@@ -20,7 +21,14 @@ public:
     };
     Player::State currentState;
     Rectangle rect;
-    Player(float x, float y, float width, float height) : rect{x, y, width, height}, speed(5.f), y_speed(0.f), gravity(0.1f), max_terminal_y_speed(10.f), currentState(FALLING) {}
+    Player(float x, float y, float width, float height) : 
+        rect{x, y, width, height}, 
+        speed(5.f), 
+        y_speed(0.f), 
+        gravity(0.1f), 
+        max_terminal_y_speed(10.f), 
+        jumping_speed(-3.f),
+        currentState(FALLING) {}
 
     void render() const
     {
@@ -69,7 +77,11 @@ public:
         }
         if (IsKeyDown(KEY_SPACE))
         {
-            // TO DO
+            if (currentState == State::ON_GROUND)
+            {
+                setState(State::JUMPING);
+                y_speed = jumping_speed;
+            }
         }
     }
 
