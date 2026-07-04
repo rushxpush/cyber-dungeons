@@ -4,14 +4,24 @@
 #include <iterator>
 #include <vector>
 
+struct Body {
+    Rectangle rect;
+    float y_speed;
+
+    Body(float x, float y, float width, float height, float vertical_speed) : 
+        rect{ x, y, width, height }, 
+        y_speed(vertical_speed)
+    {}
+};
+
 class Player
 {
 private:
     float speed;
-    float y_speed;
     float max_terminal_y_speed;
     float jumping_speed;
     float gravity;
+    Body body;
 
 public:
     enum State {
@@ -20,11 +30,10 @@ public:
         FALLING
     };
     Player::State currentState;
-    Rectangle rect;
+
     Player(float x, float y, float width, float height) : 
-        rect{x, y, width, height}, 
+        body(x, y, width, height, 0.f),
         speed(5.f), 
-        y_speed(0.f), 
         gravity(0.1f), 
         max_terminal_y_speed(10.f), 
         jumping_speed(-3.f),
@@ -33,54 +42,63 @@ public:
     void render() const
     {
         displayDebug();
-        DrawRectangle(rect.x, rect.y, rect.width, rect.height, RED);
+        DrawRectangle(body.rect.x, body.rect.y, body.rect.width, body.rect.height, RED);
+    }
+
+    Rectangle getRect()
+    {
+        return body.rect;
+    }
+
+    void setPosition(float x, float y)
+    {
+        body.rect.x = x;
+        body.rect.y = y;
     }
 
     void update()
     {
-
         updateSpeed();
         updatePosition();
-
     }
 
     void updateSpeed()
     {
-        if (y_speed < max_terminal_y_speed)
+        if (body.y_speed < max_terminal_y_speed)
         {
-            y_speed += gravity;
+            body.y_speed += gravity;
         }
     }
 
     void updatePosition()
     {
-        rect.y += y_speed;
+        body.rect.y += body.y_speed;
     }
 
     void getData() const
     {
-        std::cout << "float x_position: " << rect.x << std::endl;
-        std::cout << "float y_position: " << rect.y << std::endl;
-        std::cout << "width: " << rect.width << std::endl;
-        std::cout << "height: " << rect.height << std::endl;
+        std::cout << "float x_position: " << body.rect.x << std::endl;
+        std::cout << "float y_position: " << body.rect.y << std::endl;
+        std::cout << "width: " << body.rect.width << std::endl;
+        std::cout << "height: " << body.rect.height << std::endl;
     }
 
     void input()
     {
         if (IsKeyDown(KEY_LEFT))
         {
-            rect.x = rect.x - speed;
+            body.rect.x = body.rect.x - speed;
         }
         if (IsKeyDown(KEY_RIGHT))
         {
-            rect.x = rect.x + speed;
+            body.rect.x = body.rect.x + speed;
         }
         if (IsKeyDown(KEY_SPACE))
         {
             if (currentState == State::ON_GROUND)
             {
                 setState(State::JUMPING);
-                y_speed = jumping_speed;
+                body.y_speed = jumping_speed;
             }
         }
     }
@@ -88,22 +106,22 @@ public:
     void displayDebug() const
     {
         DrawText("vertical_speed: ", 20, 20, 16, LIGHTGRAY);
-        DrawText(std::to_string(y_speed).c_str(), 150, 20, 16, LIGHTGRAY);
+        DrawText(std::to_string(body.y_speed).c_str(), 150, 20, 16, LIGHTGRAY);
     }
 
     void setYSpeed(float speed)
     {
-        y_speed = speed;
+        body.y_speed = speed;
     }
 
     float getYSpeed() const
     {
-        return y_speed;
+        return body.y_speed;
     }
 
     Rectangle getRect() const
     {
-        return rect;
+        return body.rect;
     }
 
     void setState(enum State state)
@@ -116,6 +134,7 @@ public:
         return currentState;
     }
 };
+
 
 class Platform
 {
@@ -160,11 +179,12 @@ public:
             {
                     player.setState(Player::ON_GROUND);
                     player.setYSpeed(0);
-                    player.rect.y = platform.rect.y - player.rect.height;
+                    player.setPosition(player.getRect().x, platform.rect.y - player.getRect().height);
+
                     setCollidedPlatformRect(platform.rect);
             }
         }
-        if (!isPlayerStillOnPlatform(player.rect, collided_platform_rect))
+        if (!isPlayerStillOnPlatform(player.getRect(), collided_platform_rect))
         {
             player.setState(Player::FALLING);
         }
@@ -198,8 +218,8 @@ public:
 
     bool resolveVerticalFallingCollision(Player player, Platform platform, Rectangle previousPlayerRect)
     {
-        const bool isPlayerHorizontallyAligned = player.rect.x + player.rect.width > platform.rect.x
-            && player.rect.x < platform.rect.x + platform.rect.width;
+        const bool isPlayerHorizontallyAligned = player.getRect().x + player.getRect().width > platform.rect.x
+            && player.getRect().x < platform.rect.x + platform.rect.width;
 
         const Rectangle currentPlayerRect = player.getRect();
         const float currentPlayerBottom = currentPlayerRect.y + currentPlayerRect.height;
@@ -238,8 +258,14 @@ int main()
 {
     Player player{ 200, 200, 20, 20 };
     std::vector<Platform> platforms = {
+        Platform(150, 100, 180, 20),
         Platform(150, 300, 100, 20),
-        Platform(350, 500, 100, 20),
+        Platform(250, 400, 100, 20),
+        Platform(180, 450, 50, 20),
+        Platform(280, 550, 50, 20),
+        Platform(450, 540, 100, 20),
+        Platform(350, 350, 20, 20),
+        Platform(700, 300, 180, 20),
     };
     GameManager game{player, &platforms};
     player.getData();
