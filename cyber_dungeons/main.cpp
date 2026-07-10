@@ -54,6 +54,55 @@ struct Body {
 
 };
 
+struct Stats {
+    int hp;
+    int strength;
+    bool isAlive;
+    float damageCooldown;
+    float damageDashTimer;
+
+    Stats(int hp, int strength, bool isAlive, float damageCooldown, float damageDashTimer) :
+        hp(hp), strength(strength), isAlive(isAlive), damageCooldown(damageCooldown), damageDashTimer(damageDashTimer) {}
+
+    void getDamaged(int damage)
+    {
+        if (damageDashTimer <= 0.0f)
+        { 
+            hp = hp - damage;
+            startDamageCooldown();
+        }
+    }
+
+    int getHp() const
+    {
+        return hp;
+    }
+
+    int getStrength() const
+    {
+        return strength;
+    }
+
+    void startDamageCooldown()
+    {
+        damageDashTimer = damageCooldown;
+    }
+
+    void decreaseDamageDashTimer()
+    {
+        if (damageDashTimer >= 0)
+        {
+            damageDashTimer -= GetFrameTime();
+        }
+    }
+
+    float getDamageDashTimer() const
+    {
+        return damageDashTimer;
+    }
+
+};
+
 class Player
 {
 private:
@@ -62,27 +111,39 @@ private:
     float jumping_speed;
     float gravity;
     Body body;
+    Stats stats;
 
 public:
     enum State {
         ON_GROUND,
         JUMPING,
-        FALLING
+        FALLING,
     };
     Player::State current_state;
 
     Player(float x, float y, float width, float height) : 
         body(x, y, width, height, 0.f),
+        stats(3, 0, true, 2.0f, 0.0f),
         speed(5.f), 
         gravity(0.1f), 
         max_falling_speed(10.f), 
         jumping_speed(-3.f),
         current_state(FALLING) {}
 
-    void render() const
+    void render()
     {
         displayDebug();
-        DrawRectangle(body.getRect().x, body.getRect().y, body.getRect().width, body.getRect().height, DARKGREEN);
+
+        if (isDamageInvencibility())
+        {
+            if (shouldPlayerBlink())
+            {
+                DrawRectangle(body.getRect().x, body.getRect().y, body.getRect().width, body.getRect().height, DARKBLUE);
+            }
+        }
+        else {
+            DrawRectangle(body.getRect().x, body.getRect().y, body.getRect().width, body.getRect().height, DARKGREEN);
+        }
     }
 
     Rectangle getRect()
@@ -105,6 +166,7 @@ public:
         storePreviousRect();
         updateSpeed();
         updatePosition();
+        updateCooldowns();
     }
 
     void storePreviousRect()
@@ -175,6 +237,12 @@ public:
 
         DrawText("Player State: ", 20, 20, 16, LIGHTGRAY);
         DrawText(state.c_str(), 150, 20, 16, LIGHTGRAY);
+
+        DrawText("Hp: ", 20, 40, 16, LIGHTGRAY);
+        DrawText(std::to_string(stats.getHp()).c_str(), 150, 40, 16, LIGHTGRAY);
+
+        DrawText("Damage Cooldown: ", 20, 60, 16, LIGHTGRAY);
+        DrawText(std::to_string(stats.getDamageDashTimer()).c_str(), 150, 60, 16, LIGHTGRAY);
     }
 
     void setVerticalSpeed(float speed)
@@ -201,6 +269,50 @@ public:
     {
         return current_state;
     }
+
+    void getDamaged(int damage)
+    {
+        stats.getDamaged(damage);
+    }
+
+    int getHp() const
+    {
+        return stats.getHp();
+    }
+
+    int getStrength() const
+    {
+        return stats.getStrength();
+    }
+
+    void updateCooldowns()
+    {
+        stats.decreaseDamageDashTimer();
+    }
+
+    bool isDamageInvencibility()
+    {
+        if (stats.getDamageDashTimer() > 0)
+        {
+            return true;
+        }
+        else
+        {
+            return false;
+        }
+    }
+
+    bool shouldPlayerBlink(int delay = 10)
+    {
+        if ((int)(GetTime() * delay) % 2 == 0)
+        {
+            return true;
+        }
+        else
+        {
+            return false;
+        }
+    }
 };
 
 class Enemy
@@ -211,6 +323,7 @@ private:
     float jumping_speed;
     float gravity;
     Body body;
+    Stats stats;
 
 public:
     enum State {
@@ -222,6 +335,7 @@ public:
 
     Enemy(float x, float y, float width, float height) : 
         body(x, y, width, height, 0.f),
+        stats(1, 1, true, 0.0f, 0.0f),
         speed(5.f), 
         gravity(0.1f), 
         max_falling_speed(10.f), 
@@ -283,27 +397,6 @@ public:
         std::cout << "height: " << body.getRect().height << std::endl;
     }
 
-    void input()
-    {
-        if (IsKeyDown(KEY_LEFT))
-        {
-            body.setPosition(body.getRect().x - speed, body.getRect().y);
-        }
-        if (IsKeyDown(KEY_RIGHT))
-        {
-            body.setPosition(body.getRect().x + speed, body.getRect().y);
-        }
-        if (IsKeyDown(KEY_Z))
-        {
-            if (current_state == State::ON_GROUND)
-            {
-                std::cout << "jump!" << std::endl;
-                setState(State::JUMPING);
-                body.setVerticalSpeed(jumping_speed);
-            }
-        }
-    }
-
     void displayDebug() const
     {
         std::string state;
@@ -349,6 +442,21 @@ public:
     enum State getState() const
     {
         return current_state;
+    }
+
+    void getDamaged(int damage)
+    {
+        stats.getDamaged(damage);
+    }
+
+    int getHp() const
+    {
+        return stats.getHp();
+    }
+
+    int getStrength() const
+    {
+        return stats.getStrength();
     }
 };
 
@@ -419,6 +527,9 @@ public:
 
         for (auto& enemy : *enemies)
         {
+
+            checkCollisionEntities(player, enemy);
+
             bool isEnemyOnGround = false;
 
             for (const auto& platform : *platforms)
@@ -437,6 +548,13 @@ public:
             }
         }
 
+    }
+
+    void checkCollisionEntities(Player& player, const Enemy& enemy)
+    {
+        if (CheckCollisionRecs(player.getRect(), enemy.getRect())) {
+            player.getDamaged(enemy.getStrength());
+        }
     }
 
     void render() {
