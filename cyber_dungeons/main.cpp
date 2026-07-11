@@ -51,31 +51,50 @@ struct Body {
     {
         previousRect = rect;
     }
-
 };
 
 struct Stats {
     int hp;
+    int maxHp;
     int strength;
     bool isAlive;
     float damageCooldown;
     float damageDashTimer;
+    float respawnCooldown;
+    float respawnDashTimer;
 
-    Stats(int hp, int strength, bool isAlive, float damageCooldown, float damageDashTimer) :
-        hp(hp), strength(strength), isAlive(isAlive), damageCooldown(damageCooldown), damageDashTimer(damageDashTimer) {}
+    Stats(int hp, int maxHp, int strength, bool isAlive, float damageCooldown, float damageDashTimer, float respawnCooldown, float respawnDashTimer) :
+        hp(hp), 
+        maxHp(maxHp),
+        strength(strength), 
+        isAlive(isAlive), 
+        damageCooldown(damageCooldown), 
+        damageDashTimer(damageDashTimer), 
+        respawnCooldown(respawnCooldown),
+        respawnDashTimer(respawnDashTimer) {}
 
     void getDamaged(int damage)
     {
-        if (damageDashTimer <= 0.0f)
+        if (damageDashTimer <= 0.0f && getIsAlive())
         { 
             hp = hp - damage;
             startDamageCooldown();
         }
     }
 
+    void setHp(int value)
+    {
+        hp = value;
+    }
+
     int getHp() const
     {
         return hp;
+    }
+
+    int getMaxHp() const
+    {
+        return maxHp;
     }
 
     int getStrength() const
@@ -86,6 +105,11 @@ struct Stats {
     void startDamageCooldown()
     {
         damageDashTimer = damageCooldown;
+    }
+
+    void resetDamageDashTimer()
+    {
+        damageDashTimer = 0;
     }
 
     void decreaseDamageDashTimer()
@@ -101,6 +125,72 @@ struct Stats {
         return damageDashTimer;
     }
 
+    void die()
+    {
+        isAlive = false;
+    }
+
+    void setIsAlive(bool value)
+    {
+        isAlive = value;
+    }
+
+    bool getIsAlive() const
+    {
+        return isAlive;
+    }
+
+    void startRespawnCooldown()
+    {
+        respawnDashTimer = respawnCooldown;
+    }
+
+    void decreaseRespawnDashTimer()
+    {
+        if (respawnDashTimer >= 0 && !isAlive)
+        {
+            respawnDashTimer -= GetFrameTime();
+        }
+        //else if (respawnDashTimer <= 0 && !isAlive)
+        //{
+        //    respawn(maxHp);
+        //}
+    }
+
+    float getRespawnDashTimer() const
+    {
+        return respawnDashTimer;
+    }
+
+    void respawn(int maxHp = 3)
+    {
+        isAlive = true;
+        hp = maxHp;
+    }
+
+};
+
+struct Flags {
+    bool position;
+    bool speed;
+    bool gravity;
+    bool control;
+
+    Flags(bool position, bool speed, bool gravity, bool control) :
+        position(position), 
+        speed(speed), 
+        gravity(gravity),
+        control(control) {}
+};
+
+struct Coordinates
+{
+    float x;
+    float y;
+
+    Coordinates(float x, float y) :
+        x(x),
+        y(y) {}
 };
 
 class Player
@@ -112,29 +202,50 @@ private:
     float gravity;
     Body body;
     Stats stats;
+    Flags flags;
+    Coordinates respawnPosition;
 
 public:
     enum State {
         ON_GROUND,
         JUMPING,
         FALLING,
+        DYING
+    };
+    enum PlayerFlag {
+        POSITION,
+        SPEED,
+        GRAVITY,
+        CONTROL,
     };
     Player::State current_state;
 
-    Player(float x, float y, float width, float height) : 
+    Player(float x, float y, float width, float height) :
         body(x, y, width, height, 0.f),
-        stats(3, 0, true, 2.0f, 0.0f),
+        stats(3, 3, 0, true, 2.0f, 0.0f, 1.0f, 0.0f),
         speed(5.f), 
         gravity(0.1f), 
         max_falling_speed(10.f), 
         jumping_speed(-3.f),
-        current_state(FALLING) {}
+        current_state(FALLING), 
+        flags(true, true, true, true),
+        respawnPosition(x, y) {}
 
     void render()
     {
         displayDebug();
 
-        if (isDamageInvencibility())
+        if (!isPlayerAlive())
+        {
+            DrawRectangle(body.getRect().x, body.getRect().y, body.getRect().width, body.getRect().height, DARKGRAY);
+
+            if (shouldPlayerBlink())
+            {
+                DrawRectangle(body.getRect().x, body.getRect().y, body.getRect().width, body.getRect().height, RED);
+            }
+        }
+
+        else if (isDamageInvincibility())
         {
             if (shouldPlayerBlink())
             {
@@ -167,6 +278,12 @@ public:
         updateSpeed();
         updatePosition();
         updateCooldowns();
+        respawn();
+    }
+
+    bool isPlayerAlive() const
+    {
+        return stats.getIsAlive();
     }
 
     void storePreviousRect()
@@ -185,7 +302,7 @@ public:
 
     void updatePosition()
     {
-        body.move(0, body.getVerticalSpeed());
+        if (flags.position) body.move(0, body.getVerticalSpeed());
     }
 
     void getData() const
@@ -198,22 +315,26 @@ public:
 
     void input()
     {
-        if (IsKeyDown(KEY_LEFT))
+        if (flags.control)
         {
-            body.setPosition(body.getRect().x - speed, body.getRect().y);
-        }
-        if (IsKeyDown(KEY_RIGHT))
-        {
-            body.setPosition(body.getRect().x + speed, body.getRect().y);
-        }
-        if (IsKeyDown(KEY_Z))
-        {
-            if (current_state == State::ON_GROUND)
+            if (IsKeyDown(KEY_LEFT))
             {
-                setState(State::JUMPING);
-                body.setVerticalSpeed(jumping_speed);
+                body.setPosition(body.getRect().x - speed, body.getRect().y);
+            }
+            if (IsKeyDown(KEY_RIGHT))
+            {
+                body.setPosition(body.getRect().x + speed, body.getRect().y);
+            }
+            if (IsKeyDown(KEY_Z))
+            {
+                if (current_state == State::ON_GROUND)
+                {
+                    setState(State::JUMPING);
+                    body.setVerticalSpeed(jumping_speed);
+                }
             }
         }
+
     }
 
     void displayDebug() const
@@ -231,18 +352,42 @@ public:
         {
             state = "JUMPING";
         }
+        if (getState() == State::DYING)
+        {
+            state = "DYING";
+        }
 
         //DrawText("vertical_speed: ", 20, 20, 16, LIGHTGRAY);
         //DrawText(std::to_string(body.getVerticalSpeed()).c_str(), 150, 20, 16, LIGHTGRAY);
 
-        DrawText("Player State: ", 20, 20, 16, LIGHTGRAY);
-        DrawText(state.c_str(), 150, 20, 16, LIGHTGRAY);
+        // First Column
+        int col1KeyX = 20;
+        int col1ValX = 170;
+        DrawText("Player State: ", col1KeyX, 20, 16, LIGHTGRAY);
+        DrawText(state.c_str(), col1ValX, 20, 16, LIGHTGRAY);
 
-        DrawText("Hp: ", 20, 40, 16, LIGHTGRAY);
-        DrawText(std::to_string(stats.getHp()).c_str(), 150, 40, 16, LIGHTGRAY);
+        DrawText("Hp: ", col1KeyX, 40, 16, LIGHTGRAY);
+        DrawText(std::to_string(stats.getHp()).c_str(), col1ValX, 40, 16, LIGHTGRAY);
 
-        DrawText("Damage Cooldown: ", 20, 60, 16, LIGHTGRAY);
-        DrawText(std::to_string(stats.getDamageDashTimer()).c_str(), 150, 60, 16, LIGHTGRAY);
+        DrawText("Damage Cooldown: ", col1KeyX, 60, 16, LIGHTGRAY);
+        DrawText(std::to_string(stats.getDamageDashTimer()).c_str(), col1ValX, 60, 16, LIGHTGRAY);
+
+        DrawText("Respawn Cooldown: ", col1KeyX, 80, 16, LIGHTGRAY);
+        DrawText(std::to_string(stats.getRespawnDashTimer()).c_str(), col1ValX, 80, 16, LIGHTGRAY);
+
+        // Second Column
+        int col2KeyX = 300;
+        int col2ValX = 470;
+        DrawText("isAlive: ", col2KeyX, 20, 16, LIGHTGRAY);
+
+        Color isAliveColor = getIsAlive() ? DARKGREEN : RED;
+        DrawText(getIsAlive() ? "true" : "false", col2ValX, 20, 16, isAliveColor);
+
+        DrawText("flags.position: ", col2KeyX, 40, 16, LIGHTGRAY);
+        DrawText(flags.position ? "true" : "false", col2ValX, 40, 16, LIGHTGRAY);
+
+        DrawText("flags.control: ", col2KeyX, 60, 16, LIGHTGRAY);
+        DrawText(flags.control ? "true" : "false", col2ValX, 60, 16, LIGHTGRAY);
     }
 
     void setVerticalSpeed(float speed)
@@ -288,9 +433,10 @@ public:
     void updateCooldowns()
     {
         stats.decreaseDamageDashTimer();
+        stats.decreaseRespawnDashTimer();
     }
 
-    bool isDamageInvencibility()
+    bool isDamageInvincibility()
     {
         if (stats.getDamageDashTimer() > 0)
         {
@@ -313,6 +459,60 @@ public:
             return false;
         }
     }
+
+    bool getIsAlive() const
+    {
+        return stats.isAlive;
+    }
+
+    bool isHpDepleted() const
+    {
+        return stats.hp <= 0 ? true : false;
+    }
+
+    void die()
+    {
+        stats.die();
+        stats.startRespawnCooldown();
+        stats.resetDamageDashTimer();
+        setState(Player::DYING);
+        setFlag(PlayerFlag::POSITION, false);
+        setFlag(PlayerFlag::CONTROL, false);
+    }
+
+    void respawn()
+    {
+
+        if (stats.getIsAlive() == false && stats.getRespawnDashTimer() <= 0)
+        {
+            stats.setIsAlive(true);
+            stats.setHp(stats.maxHp);
+            setState(Player::FALLING);
+            setFlag(PlayerFlag::POSITION, true);
+            setFlag(PlayerFlag::CONTROL, true);
+            setPosition(respawnPosition.x, respawnPosition.y);
+            setVerticalSpeed(0.0f);
+        }
+    }
+
+    void setFlag(PlayerFlag flag, bool state)
+    {
+        switch (flag)
+        {
+        case (PlayerFlag::POSITION):
+            flags.position = state;
+            break;
+        case (PlayerFlag::SPEED):
+            flags.speed = state;
+            break;
+        case (PlayerFlag::GRAVITY):
+            flags.gravity = state;
+            break;
+        case (PlayerFlag::CONTROL):
+            flags.control = state;
+            break;
+        }
+    }
 };
 
 class Enemy
@@ -324,6 +524,7 @@ private:
     float gravity;
     Body body;
     Stats stats;
+    Flags flags;
 
 public:
     enum State {
@@ -335,12 +536,13 @@ public:
 
     Enemy(float x, float y, float width, float height) : 
         body(x, y, width, height, 0.f),
-        stats(1, 1, true, 0.0f, 0.0f),
+        stats(1, 1, 1, true, 0.0f, 0.0f, 0.0f, 0.0f),
         speed(5.f), 
         gravity(0.1f), 
         max_falling_speed(10.f), 
         jumping_speed(-3.f),
-        current_state(FALLING) {}
+        current_state(FALLING), 
+        flags(true, true, true, false) {}
 
     void render() const
     {
@@ -554,6 +756,7 @@ public:
     {
         if (CheckCollisionRecs(player.getRect(), enemy.getRect())) {
             player.getDamaged(enemy.getStrength());
+            if (player.isHpDepleted() && player.getIsAlive()) player.die();
         }
     }
 
