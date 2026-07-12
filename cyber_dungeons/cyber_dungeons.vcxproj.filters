@@ -13,10 +13,63 @@
       <UniqueIdentifier>{67DA6AB6-F800-4c08-8B7A-83BB121AAD01}</UniqueIdentifier>
       <Extensions>rc;ico;cur;bmp;dlg;rc2;rct;bin;rgs;gif;jpg;jpeg;jpe;resx;tiff;tif;png;wav;mfcribbon-ms</Extensions>
     </Filter>
+    <Filter Include="player">
+      <UniqueIdentifier>{e6d15e16-3ec9-4aa0-bb46-9838e752aa9c}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="enemy">
+      <UniqueIdentifier>{3f1249f7-2a29-4adf-9d61-e008d3e18fbc}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="core">
+      <UniqueIdentifier>{09352f6a-b7ab-4d48-bf6a-6de10e3f1238}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="platform">
+      <UniqueIdentifier>{1ae20903-8c60-4f90-8698-9e252ae144bc}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="game">
+      <UniqueIdentifier>{aa8741ce-49f9-4107-a3d7-669bb8948f85}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="main.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
+    <ClCompile Include="player\Player.cpp">
+      <Filter>player</Filter>
+    </ClCompile>
+    <ClCompile Include="enemy\Enemy.cpp">
+      <Filter>enemy</Filter>
+    </ClCompile>
+    <ClCompile Include="platform\Platform.cpp">
+      <Filter>platform</Filter>
+    </ClCompile>
+    <ClCompile Include="game\GameManager.cpp">
+      <Filter>game</Filter>
+    </ClCompile>
+  </ItemGroup>
+  <ItemGroup>
+    <ClInclude Include="core\Body.h">
+      <Filter>core</Filter>
+    </ClInclude>
+    <ClInclude Include="core\Coordinates.h">
+      <Filter>core</Filter>
+    </ClInclude>
+    <ClInclude Include="core\Flags.h">
+      <Filter>core</Filter>
+    </ClInclude>
+    <ClInclude Include="core\Stats.h">
+      <Filter>core</Filter>
+    </ClInclude>
+    <ClInclude Include="player\Player.h">
+      <Filter>player</Filter>
+    </ClInclude>
+    <ClInclude Include="enemy\Enemy.h">
+      <Filter>enemy</Filter>
+    </ClInclude>
+    <ClInclude Include="platform\Platform.h">
+      <Filter>platform</Filter>
+    </ClInclude>
+    <ClInclude Include="game\GameManager.h">
+      <Filter>game</Filter>
+    </ClInclude>
   </ItemGroup>
 </Project>
