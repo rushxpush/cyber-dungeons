@@ -10,6 +10,7 @@ class GameManager
 private:
 	const int screenWidth = 800;
     const int screenHeight = 600;
+    const int offscreenDeathTolerance = 20;
     bool isRunning = false;
     Player player;
     std::vector <Platform> *platforms;
@@ -28,4 +29,5 @@ public:
     // collision
     void checkCollisionEntities(Player& player, const Enemy& enemy);
     bool resolveVerticalFallingCollision(Rectangle currRect, Rectangle prevRect, float verticalSpeed, Platform platform);
+    void checkOffscreenFall(Player& player);
 };

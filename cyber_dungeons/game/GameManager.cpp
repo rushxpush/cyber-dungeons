@@ -18,6 +18,7 @@ void GameManager::update() {
     std::vector <Enemy> enemiesPreviousRect;
 
     player.update();
+    checkOffscreenFall(player);
 
     for (Enemy& enemy : *enemies)
     {
@@ -72,6 +73,11 @@ void GameManager::checkCollisionEntities(Player& player, const Enemy& enemy)
         player.getDamaged(enemy.getStrength());
         if (player.isHpDepleted() && player.getIsAlive()) player.die();
     }
+}
+
+void GameManager::checkOffscreenFall(Player& player)
+{
+    if (player.getRect().y > screenHeight + offscreenDeathTolerance && player.getIsAlive()) player.die();
 }
 
 void GameManager::render() {

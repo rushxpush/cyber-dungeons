@@ -178,6 +178,7 @@ bool Player::isHpDepleted() const
 
 void Player::die()
 {
+    if (stats.getHp() > 0) stats.setHp(0);
     stats.die();
     stats.startRespawnCooldown();
     stats.resetDamageDashTimer();
