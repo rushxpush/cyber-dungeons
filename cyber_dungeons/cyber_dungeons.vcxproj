@@ -138,6 +138,7 @@
   <ItemGroup>
     <ClInclude Include="core\Body.h" />
     <ClInclude Include="core\Coordinates.h" />
+    <ClInclude Include="core\Direction.h" />
     <ClInclude Include="core\Flags.h" />
     <ClInclude Include="core\Stats.h" />
     <ClInclude Include="enemy\Enemy.h" />

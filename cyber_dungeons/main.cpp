@@ -13,16 +13,17 @@
 
 int main()
 {
-    Player player{ 160, 200, 20, 20 };
+    Player player{ 160, 200, 20, 20, 0, 0 };
 
     std::vector<Enemy> enemies = {
-        Enemy(200, 200, 20, 20),
-        Enemy(500, 200, 20, 20),
+        Enemy(200, 200, 20, 20, 0, 0),
+        Enemy(500, 200, 20, 20, 0, 0),
     };
 
     std::vector<Platform> platforms = {
         Platform(150, 100, 180, 20),
         Platform(150, 300, 100, 20),
+        Platform(250, 280, 100, 20),
         Platform(250, 400, 100, 20),
         Platform(180, 450, 50, 20),
         Platform(280, 550, 50, 20),

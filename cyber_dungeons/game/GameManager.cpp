@@ -2,6 +2,7 @@
 #include "Player.h"
 #include "Enemy.h"
 #include "Platform.h"
+#include "Direction.h"
 #include <vector>
 
 GameManager::GameManager(Player player, std::vector<Enemy> *enemies, std::vector<Platform> *platforms) : 
@@ -39,6 +40,19 @@ void GameManager::update() {
         }
         else {
             if (!isPlayerOnGround && player.getState() != Player::FALLING) player.setState(Player::FALLING);
+        }
+
+        if (resolveHorizontalCollision(player.getRect(), player.getPreviousRect(), player.getDirection(), platform))
+        {
+            if (player.getDirection().x < 0)
+            {
+                player.setPosition(platform.rect.x + platform.rect.width, player.getRect().y);
+            }
+            else if (player.getDirection().x > 0)
+            {
+                player.setPosition(platform.rect.x - player.getRect().width, player.getRect().y);
+            }
+
         }
     }
 
@@ -131,4 +145,41 @@ bool GameManager::resolveVerticalFallingCollision(Rectangle currRect, Rectangle 
     }
 
     return false;
+}
+
+bool GameManager::resolveHorizontalCollision(Rectangle currRect, Rectangle prevRect, Direction direction, Platform platform)
+{
+    const bool isRectVerticallyAligned = currRect.y + currRect.height > platform.rect.y
+        && currRect.y < platform.rect.y + platform.rect.height;
+
+
+    const Rectangle currentPlayerRect = currRect;
+    if (direction.x > 0)
+    {
+        const float currentRectRight = currentPlayerRect.x + currentPlayerRect.width;
+        const float previousRectRight = prevRect.x + prevRect.width;
+        const float platformLeft = platform.rect.x;
+
+        if (isRectVerticallyAligned
+            && previousRectRight <= platformLeft
+            && currentRectRight > platformLeft)
+        {
+            return true;
+        }
+        return false;
+    }
+    else if (direction.x < 0)
+    {
+        const float currentRectLeft = currentPlayerRect.x;
+        const float previousRectLeft = prevRect.x;
+        const float platformRight = platform.rect.x + platform.rect.width;
+
+        if (isRectVerticallyAligned
+            && previousRectLeft >= platformRight
+            && currentRectLeft < platformRight)
+        {
+            return true;
+        }
+        return false;
+    }
 }

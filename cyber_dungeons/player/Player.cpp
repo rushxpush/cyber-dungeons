@@ -6,8 +6,8 @@
 #include <iostream>
 #include <string>
 
-Player::Player(float x, float y, float width, float height) :
-    body(x, y, width, height, 0.f),
+Player::Player(float x, float y, float width, float height, int directionX, int directionY) :
+    body(x, y, width, height, 0.f, directionX, directionY),
     stats(3, 3, 0, true, 2.0f, 0.0f, 1.0f, 0.0f),
     speed(5.f), 
     gravity(0.1f), 
@@ -61,10 +61,14 @@ void Player::setPosition(float x, float y)
 void Player::update()
 {
     storePreviousRect();
+
+    //std::cout << "________________" << std::endl;
+    //std::cout << "prev rect.x: " << body.getRect().x << std::endl;
     updateSpeed();
     updatePosition();
     updateCooldowns();
     respawn();
+    //std::cout << "curr rect.x: " << body.getRect().x << std::endl;
 }
 
 bool Player::isPlayerAlive() const
@@ -86,11 +90,13 @@ void Player::input()
     {
         if (IsKeyDown(KEY_LEFT))
         {
-            body.setPosition(body.getRect().x - speed, body.getRect().y);
+            //body.setPosition(body.getRect().x - speed, body.getRect().y);
+            body.setDirection(-1, body.getDirection().y);
         }
         if (IsKeyDown(KEY_RIGHT))
         {
-            body.setPosition(body.getRect().x + speed, body.getRect().y);
+            //body.setPosition(body.getRect().x + speed, body.getRect().y);
+            body.setDirection(1, body.getDirection().y);
         }
         if (IsKeyDown(KEY_Z))
         {
@@ -99,6 +105,10 @@ void Player::input()
                 setState(State::JUMPING);
                 body.setVerticalSpeed(jumping_speed);
             }
+        }
+        else if (IsKeyUp(KEY_LEFT) && IsKeyUp(KEY_RIGHT))
+        {
+            body.setDirection(0, body.getDirection().y);
         }
     }
 
@@ -113,6 +123,11 @@ void Player::setVerticalSpeed(float speed)
 float Player::getVerticalSpeed() const
 {
     return body.getVerticalSpeed();
+}
+
+Direction Player::getDirection() const
+{
+    return body.getDirection();
 }
 
 void Player::setState(enum State state)
@@ -237,7 +252,10 @@ void Player::updateSpeed()
 
 void Player::updatePosition()
 {
-    if (flags.position) body.move(0, body.getVerticalSpeed());
+    if (flags.position) 
+    {
+        body.move(speed * body.getDirection().x, body.getVerticalSpeed());
+    }
 }
 
 void Player::updateCooldowns()
@@ -270,19 +288,19 @@ void Player::displayDebug() const
     //DrawText(std::to_string(body.getVerticalSpeed()).c_str(), 150, 20, 16, LIGHTGRAY);
 
     // First Column
-    int col1KeyX = 20;
-    int col1ValX = 170;
-    DrawText("Player State: ", col1KeyX, 20, 16, LIGHTGRAY);
-    DrawText(state.c_str(), col1ValX, 20, 16, LIGHTGRAY);
+    //int col1KeyX = 20;
+    //int col1ValX = 170;
+    //DrawText("Player State: ", col1KeyX, 20, 16, LIGHTGRAY);
+    //DrawText(state.c_str(), col1ValX, 20, 16, LIGHTGRAY);
 
-    DrawText("Hp: ", col1KeyX, 40, 16, LIGHTGRAY);
-    DrawText(std::to_string(stats.getHp()).c_str(), col1ValX, 40, 16, LIGHTGRAY);
+    //DrawText("Hp: ", col1KeyX, 40, 16, LIGHTGRAY);
+    //DrawText(std::to_string(stats.getHp()).c_str(), col1ValX, 40, 16, LIGHTGRAY);
 
-    DrawText("Damage Cooldown: ", col1KeyX, 60, 16, LIGHTGRAY);
-    DrawText(std::to_string(stats.getDamageDashTimer()).c_str(), col1ValX, 60, 16, LIGHTGRAY);
+    //DrawText("Damage Cooldown: ", col1KeyX, 60, 16, LIGHTGRAY);
+    //DrawText(std::to_string(stats.getDamageDashTimer()).c_str(), col1ValX, 60, 16, LIGHTGRAY);
 
-    DrawText("Respawn Cooldown: ", col1KeyX, 80, 16, LIGHTGRAY);
-    DrawText(std::to_string(stats.getRespawnDashTimer()).c_str(), col1ValX, 80, 16, LIGHTGRAY);
+    //DrawText("Respawn Cooldown: ", col1KeyX, 80, 16, LIGHTGRAY);
+    //DrawText(std::to_string(stats.getRespawnDashTimer()).c_str(), col1ValX, 80, 16, LIGHTGRAY);
 
     // Second Column
     int col2KeyX = 300;
@@ -297,4 +315,14 @@ void Player::displayDebug() const
 
     DrawText("flags.control: ", col2KeyX, 60, 16, LIGHTGRAY);
     DrawText(flags.control ? "true" : "false", col2ValX, 60, 16, LIGHTGRAY);
+
+    // Third Column
+    int col3KeyX = 600;
+    int col3ValX = 770;
+
+    DrawText("Direction X: ", col3KeyX, 20, 16, LIGHTGRAY);
+    DrawText(std::to_string(body.getDirection().x).c_str(), col3ValX, 20, 16, LIGHTGRAY);
+
+    DrawText("Direction Y: ", col3KeyX, 40, 16, LIGHTGRAY);
+    DrawText(std::to_string(body.getDirection().y).c_str(), col3ValX, 40, 16, LIGHTGRAY);
 }

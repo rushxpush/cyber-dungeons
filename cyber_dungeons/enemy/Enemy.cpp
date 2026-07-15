@@ -5,8 +5,8 @@
 #include <iostream>
 
 
-Enemy::Enemy(float x, float y, float width, float height) : 
-    body(x, y, width, height, 0.f),
+Enemy::Enemy(float x, float y, float width, float height, int directionX, int directionY) : 
+    body(x, y, width, height, 0.f, directionX, directionY),
     stats(1, 1, 1, true, 0.0f, 0.0f, 0.0f, 0.0f),
     speed(5.f), 
     gravity(0.1f), 

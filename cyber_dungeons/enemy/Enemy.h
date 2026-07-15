@@ -24,7 +24,7 @@ public:
     };
     Enemy::State current_state;
 
-    Enemy(float x, float y, float width, float height);
+    Enemy(float x, float y, float width, float height, int directionX, int directionY);
 
     // core
     void render() const;

@@ -33,7 +33,7 @@ public:
     };
     Player::State current_state;
 
-    Player(float x, float y, float width, float height);
+    Player(float x, float y, float width, float height, int directionX, int directionY);
 
     // core
     void input();
@@ -56,6 +56,7 @@ public:
     void setPosition(float x, float y);
     void setVerticalSpeed(float speed);
     float getVerticalSpeed() const;
+    Direction getDirection() const;
 
     // stats
     bool isPlayerAlive() const;

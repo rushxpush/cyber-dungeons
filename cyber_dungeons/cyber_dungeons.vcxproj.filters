@@ -71,5 +71,8 @@
     <ClInclude Include="game\GameManager.h">
       <Filter>game</Filter>
     </ClInclude>
+    <ClInclude Include="core\Direction.h">
+      <Filter>core</Filter>
+    </ClInclude>
   </ItemGroup>
 </Project>
