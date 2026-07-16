@@ -42,6 +42,7 @@ public:
 
     // movement
     void setPosition(float x, float y);
+    Direction getDirection() const;
     void setVerticalSpeed(float speed);
     float getVerticalSpeed() const;
 
@@ -55,6 +56,7 @@ public:
 private:
     void storePreviousRect();
     void updateSpeed();
+    void updateDirection();
     void updatePosition();
     void getData() const;
     void displayDebug() const;

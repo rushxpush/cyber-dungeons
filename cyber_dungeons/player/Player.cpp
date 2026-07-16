@@ -61,14 +61,11 @@ void Player::setPosition(float x, float y)
 void Player::update()
 {
     storePreviousRect();
-
-    //std::cout << "________________" << std::endl;
-    //std::cout << "prev rect.x: " << body.getRect().x << std::endl;
     updateSpeed();
+    updateDirection();
     updatePosition();
     updateCooldowns();
     respawn();
-    //std::cout << "curr rect.x: " << body.getRect().x << std::endl;
 }
 
 bool Player::isPlayerAlive() const
@@ -247,6 +244,26 @@ void Player::updateSpeed()
     {
         auto updatedVerticalSpeed = body.getVerticalSpeed() + gravity;
         body.setVerticalSpeed(updatedVerticalSpeed);
+    }
+}
+
+void Player::setDirection(int x, int y)
+{
+    body.setDirection(x, y);
+}
+
+void Player::updateDirection()
+{
+    if (body.getVerticalSpeed() < 0)
+    {
+        body.setDirection(body.getDirection().x, -1);
+    }
+    else if (body.getVerticalSpeed() > 0)
+    {
+        body.setDirection(body.getDirection().x , 1);
+    }
+    else {
+        body.setDirection(body.getDirection().x, 0);
     }
 }
 

@@ -30,13 +30,19 @@ void GameManager::update() {
     for (const auto& platform : *platforms)
     {
 
-        if (resolveVerticalFallingCollision(player.getRect(), player.getPreviousRect(), player.getVerticalSpeed(), platform))
+        if (resolveVerticalCollision(player.getRect(), player.getPreviousRect(), player.getVerticalSpeed(), player.getDirection(), platform))
         {
-            isPlayerOnGround = true;
-            player.setState(Player::ON_GROUND);
-            player.setVerticalSpeed(0);
-            player.setPosition(player.getRect().x, platform.rect.y - player.getRect().height);
-
+            if (player.getDirection().y < 0)
+            {
+                player.setVerticalSpeed(0);
+            }
+            else if (player.getDirection().y > 0)
+            {
+                isPlayerOnGround = true;
+                player.setState(Player::ON_GROUND);
+                player.setVerticalSpeed(0);
+                player.setPosition(player.getRect().x, platform.rect.y - player.getRect().height);
+            }
         }
         else {
             if (!isPlayerOnGround && player.getState() != Player::FALLING) player.setState(Player::FALLING);
@@ -58,27 +64,31 @@ void GameManager::update() {
 
     for (auto& enemy : *enemies)
     {
-
         checkCollisionEntities(player, enemy);
 
         bool isEnemyOnGround = false;
 
         for (const auto& platform : *platforms)
         {
-            if (resolveVerticalFallingCollision(enemy.getRect(), enemy.getPreviousRect(), enemy.getVerticalSpeed(), platform))
+            if (resolveVerticalCollision(enemy.getRect(), enemy.getPreviousRect(), enemy.getVerticalSpeed(), enemy.getDirection(), platform))
             {
-                isEnemyOnGround = true;
-                enemy.setState(Enemy::ON_GROUND);
-                enemy.setVerticalSpeed(0);
-                enemy.setPosition(enemy.getRect().x, platform.rect.y - enemy.getRect().height);
-
+                if (enemy.getDirection().y < 0)
+                {
+                    enemy.setVerticalSpeed(0);
+                }
+                else if (enemy.getDirection().y > 0)
+                {
+                    isEnemyOnGround = true;
+                    enemy.setState(Enemy::ON_GROUND);
+                    enemy.setVerticalSpeed(0);
+                    enemy.setPosition(enemy.getRect().x, platform.rect.y - enemy.getRect().height);
+                }
             }
             else {
                 if (!isEnemyOnGround) enemy.setState(Enemy::FALLING);
             }
         }
     }
-
 }
 
 void GameManager::checkCollisionEntities(Player& player, const Enemy& enemy)
@@ -125,7 +135,7 @@ void GameManager::run() {
     }
 }
 
-bool GameManager::resolveVerticalFallingCollision(Rectangle currRect, Rectangle prevRect, float verticalSpeed, Platform platform)
+bool GameManager::resolveVerticalCollision(Rectangle currRect, Rectangle prevRect, float verticalSpeed, Direction direction, Platform platform)
 {
     const bool isRectHorizontallyAligned = currRect.x + currRect.width > platform.rect.x
         && currRect.x < platform.rect.x + platform.rect.width;
@@ -135,10 +145,31 @@ bool GameManager::resolveVerticalFallingCollision(Rectangle currRect, Rectangle 
     const float previousRectBottom = prevRect.y + prevRect.height;
     const float platformTop = platform.rect.y;
 
+    const float currentRectTop = currentPlayerRect.y;
+    const float previousRectTop = prevRect.y;
+    const float platformBottom = platform.rect.y + platform.rect.height;
+
+    //if (isRectHorizontallyAligned
+    //    && previousRectBottom  <= platform.rect.y
+    //    && currentRectBottom  > platform.rect.y
+    //    && verticalSpeed > 0
+    //    )
+    //{
+    //    return true;
+    //}
+
     if (isRectHorizontallyAligned
-        && previousRectBottom  <= platform.rect.y
-        && currentRectBottom  > platform.rect.y
-        && verticalSpeed > 0
+        && previousRectTop  >= platformBottom 
+        && currentRectTop  < platformBottom 
+        && direction.y < 0 
+        )
+    {
+        return true;
+    }
+    else if (isRectHorizontallyAligned
+        && previousRectBottom <= platform.rect.y
+        && currentRectBottom > platform.rect.y
+        && direction.y > 0
         )
     {
         return true;

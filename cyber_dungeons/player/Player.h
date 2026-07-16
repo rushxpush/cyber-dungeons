@@ -57,6 +57,7 @@ public:
     void setVerticalSpeed(float speed);
     float getVerticalSpeed() const;
     Direction getDirection() const;
+    void setDirection(int x, int y);
 
     // stats
     bool isPlayerAlive() const;
@@ -76,6 +77,7 @@ private:
     void storePreviousRect();
     void updateSpeed();
     void updatePosition();
+    void updateDirection();
     void displayDebug() const;
     void setFlag(PlayerFlag flag, bool state);
 };

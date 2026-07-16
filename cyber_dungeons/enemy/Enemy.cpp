@@ -39,7 +39,14 @@ void Enemy::setPosition(float x, float y)
 void Enemy::update()
 {
     storePreviousRect();
+
+            if (current_state == State::ON_GROUND)
+            {
+                setState(State::JUMPING);
+                body.setVerticalSpeed(jumping_speed);
+            }
     updateSpeed();
+    updateDirection();
     updatePosition();
 }
 
@@ -91,6 +98,27 @@ void Enemy::displayDebug() const
     //DrawText("Enemy State: ", 20, 40, 16, LIGHTGRAY);
     //DrawText(state.c_str(), 150, 40, 16, LIGHTGRAY);
 }
+
+Direction Enemy::getDirection() const
+{
+    return body.getDirection();
+}
+
+void Enemy::updateDirection()
+{
+    if (body.getVerticalSpeed() < 0)
+    {
+        body.setDirection(body.getDirection().x, -1);
+    }
+    else if (body.getVerticalSpeed() > 0)
+    {
+        body.setDirection(body.getDirection().x , 1);
+    }
+    else {
+        body.setDirection(body.getDirection().x, 0);
+    }
+}
+
 
 void Enemy::setVerticalSpeed(float speed)
 {

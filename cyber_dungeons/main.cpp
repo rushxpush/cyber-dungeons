@@ -17,7 +17,7 @@ int main()
 
     std::vector<Enemy> enemies = {
         Enemy(200, 200, 20, 20, 0, 0),
-        Enemy(500, 200, 20, 20, 0, 0),
+        Enemy(500, 500, 20, 20, 0, 0),
     };
 
     std::vector<Platform> platforms = {
@@ -26,6 +26,7 @@ int main()
         Platform(250, 280, 100, 20),
         Platform(250, 400, 100, 20),
         Platform(180, 450, 50, 20),
+        Platform(500, 475, 50, 20),
         Platform(280, 550, 50, 20),
         Platform(450, 540, 100, 20),
         Platform(350, 350, 20, 20),

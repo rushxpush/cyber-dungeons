@@ -28,7 +28,7 @@ public:
 
     // collision
     void checkCollisionEntities(Player& player, const Enemy& enemy);
-    bool resolveVerticalFallingCollision(Rectangle currRect, Rectangle prevRect, float verticalSpeed, Platform platform);
+    bool resolveVerticalCollision(Rectangle currRect, Rectangle prevRect, float verticalSpeed, Direction direction, Platform platform);
     bool resolveHorizontalCollision(Rectangle currRect, Rectangle prevRect, Direction direction, Platform platform);
     void checkOffscreenFall(Player& player);
 };
