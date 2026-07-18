@@ -43,6 +43,7 @@ public:
     // lifecycle
     void die();
     void respawn();
+    void restart();
     
     // state 
     void setState(enum State state);

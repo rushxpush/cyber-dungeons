@@ -95,6 +95,11 @@ struct Stats {
         respawnDashTimer = respawnCooldown;
     }
 
+    void resetRespawnCooldown()
+    {
+        respawnDashTimer = 0;
+    }
+
     void decreaseRespawnDashTimer()
     {
         if (respawnDashTimer >= 0 && !isAlive)

@@ -9,9 +9,11 @@ GameManager::GameManager(Player player, std::vector<Enemy> *enemies, std::vector
     player(player), 
     enemies(enemies),
     platforms(platforms), 
-    collided_platform_rect(-1, -1, -1, -1) {}
+    collided_platform_rect(-1, -1, -1, -1),
+    state(PLAYING){}
 
-void GameManager::input() {
+void GameManager::input() 
+{
     player.input();
 }
 
@@ -95,13 +97,21 @@ void GameManager::checkCollisionEntities(Player& player, const Enemy& enemy)
 {
     if (CheckCollisionRecs(player.getRect(), enemy.getRect())) {
         player.getDamaged(enemy.getStrength());
-        if (player.isHpDepleted() && player.getIsAlive()) player.die();
+        if (player.isHpDepleted() && player.getIsAlive())
+        {
+            setState(GAME_OVER);
+            player.die();
+        }
     }
 }
 
 void GameManager::checkOffscreenFall(Player& player)
 {
-    if (player.getRect().y > screenHeight + offscreenDeathTolerance && player.getIsAlive()) player.die();
+    if (player.getRect().y > screenHeight + offscreenDeathTolerance && player.getIsAlive())
+    {
+        setState(GAME_OVER);
+        player.die();
+    }
 }
 
 void GameManager::render() {
@@ -122,17 +132,63 @@ void GameManager::run() {
     InitWindow(screenWidth, screenHeight, "Cyber Dungeons!");
     SetTargetFPS(60);
     isRunning = true;
+    std::cout << "state: " << getState() << std::endl;
 
     while (!WindowShouldClose() && isRunning)
     {
-        input();
-        update();
-        BeginDrawing();
-            ClearBackground(RAYWHITE);
-            //DrawText("Works", 20, 200, 20, LIGHTGRAY);
-            render();
-        EndDrawing();
+
+        switch (state)
+        {
+            case PLAYING:
+                runPlayingState();
+                break;
+            case GAME_OVER:
+                runGameOverState();
+                break;
+            default:
+                break;
+        }
     }
+}
+
+void GameManager::restart()
+{
+    setState(PLAYING);
+    player.restart();
+}
+
+void GameManager::setState(GameManager::State newState)
+{
+    state = newState;
+}
+
+GameManager::State GameManager::getState()
+{
+    return state;
+}
+
+void GameManager::runPlayingState()
+{
+    input();
+    update();
+    BeginDrawing();
+        ClearBackground(RAYWHITE);
+        render();
+    EndDrawing();
+}
+
+void GameManager::runGameOverState()
+{
+    if (GetKeyPressed() > 0)
+    {
+        restart();
+    }
+    BeginDrawing();
+        ClearBackground(RAYWHITE);
+        DrawText("Game Over", 20, 200, 20, RED);
+        DrawText("Press any key to restart...", 20, 220, 20, RED);
+        render();
+    EndDrawing();
 }
 
 bool GameManager::resolveVerticalCollision(Rectangle currRect, Rectangle prevRect, float verticalSpeed, Direction direction, Platform platform)
@@ -148,15 +204,6 @@ bool GameManager::resolveVerticalCollision(Rectangle currRect, Rectangle prevRec
     const float currentRectTop = currentPlayerRect.y;
     const float previousRectTop = prevRect.y;
     const float platformBottom = platform.rect.y + platform.rect.height;
-
-    //if (isRectHorizontallyAligned
-    //    && previousRectBottom  <= platform.rect.y
-    //    && currentRectBottom  > platform.rect.y
-    //    && verticalSpeed > 0
-    //    )
-    //{
-    //    return true;
-    //}
 
     if (isRectHorizontallyAligned
         && previousRectTop  >= platformBottom 

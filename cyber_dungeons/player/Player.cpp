@@ -108,9 +108,7 @@ void Player::input()
             body.setDirection(0, body.getDirection().y);
         }
     }
-
 }
-
 
 void Player::setVerticalSpeed(float speed)
 {
@@ -186,6 +184,15 @@ bool Player::getIsAlive() const
 bool Player::isHpDepleted() const
 {
     return stats.hp <= 0 ? true : false;
+}
+
+void Player::restart()
+{
+    stats.resetDamageDashTimer();
+    stats.resetRespawnCooldown();
+    setState(Player::JUMPING);
+    setFlag(PlayerFlag::POSITION, true);
+    setFlag(PlayerFlag::CONTROL, true);
 }
 
 void Player::die()
@@ -305,19 +312,19 @@ void Player::displayDebug() const
     //DrawText(std::to_string(body.getVerticalSpeed()).c_str(), 150, 20, 16, LIGHTGRAY);
 
     // First Column
-    //int col1KeyX = 20;
-    //int col1ValX = 170;
-    //DrawText("Player State: ", col1KeyX, 20, 16, LIGHTGRAY);
-    //DrawText(state.c_str(), col1ValX, 20, 16, LIGHTGRAY);
+    int col1KeyX = 20;
+    int col1ValX = 170;
+    DrawText("Player State: ", col1KeyX, 20, 16, LIGHTGRAY);
+    DrawText(state.c_str(), col1ValX, 20, 16, LIGHTGRAY);
 
-    //DrawText("Hp: ", col1KeyX, 40, 16, LIGHTGRAY);
-    //DrawText(std::to_string(stats.getHp()).c_str(), col1ValX, 40, 16, LIGHTGRAY);
+    DrawText("Hp: ", col1KeyX, 40, 16, LIGHTGRAY);
+    DrawText(std::to_string(stats.getHp()).c_str(), col1ValX, 40, 16, LIGHTGRAY);
 
-    //DrawText("Damage Cooldown: ", col1KeyX, 60, 16, LIGHTGRAY);
-    //DrawText(std::to_string(stats.getDamageDashTimer()).c_str(), col1ValX, 60, 16, LIGHTGRAY);
+    DrawText("Damage Cooldown: ", col1KeyX, 60, 16, LIGHTGRAY);
+    DrawText(std::to_string(stats.getDamageDashTimer()).c_str(), col1ValX, 60, 16, LIGHTGRAY);
 
-    //DrawText("Respawn Cooldown: ", col1KeyX, 80, 16, LIGHTGRAY);
-    //DrawText(std::to_string(stats.getRespawnDashTimer()).c_str(), col1ValX, 80, 16, LIGHTGRAY);
+    DrawText("Respawn Cooldown: ", col1KeyX, 80, 16, LIGHTGRAY);
+    DrawText(std::to_string(stats.getRespawnDashTimer()).c_str(), col1ValX, 80, 16, LIGHTGRAY);
 
     // Second Column
     int col2KeyX = 300;
