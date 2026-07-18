@@ -17,8 +17,9 @@ private:
     std::vector <Enemy>* enemies;
     Rectangle collided_platform_rect;
     enum State {
+        MAIN_MENU,
         PLAYING,
-        GAME_OVER
+        GAME_OVER,
     };
     GameManager::State state;
 
@@ -33,9 +34,11 @@ public:
 
     // state
     State getState();
+    void runMainMenuState();
     void runPlayingState();
     void runGameOverState();
     void setState(GameManager::State state);
+    void startGame();
     void restart();
 
     // collision

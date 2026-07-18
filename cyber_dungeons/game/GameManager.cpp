@@ -10,7 +10,8 @@ GameManager::GameManager(Player player, std::vector<Enemy> *enemies, std::vector
     enemies(enemies),
     platforms(platforms), 
     collided_platform_rect(-1, -1, -1, -1),
-    state(PLAYING){}
+    //state(PLAYING){}
+    state(MAIN_MENU){}
 
 void GameManager::input() 
 {
@@ -132,13 +133,14 @@ void GameManager::run() {
     InitWindow(screenWidth, screenHeight, "Cyber Dungeons!");
     SetTargetFPS(60);
     isRunning = true;
-    std::cout << "state: " << getState() << std::endl;
 
     while (!WindowShouldClose() && isRunning)
     {
-
         switch (state)
         {
+            case MAIN_MENU:
+                runMainMenuState();
+            break;
             case PLAYING:
                 runPlayingState();
                 break;
@@ -167,6 +169,26 @@ GameManager::State GameManager::getState()
     return state;
 }
 
+void GameManager::runMainMenuState()
+{
+    if (GetKeyPressed() > 0)
+    {
+        startGame();
+    }
+
+    BeginDrawing();
+        ClearBackground(RAYWHITE);
+        const char* titleText = "Cyber Dungeons";
+        int titleFontSize = 40;
+        DrawText(titleText, (screenWidth - MeasureText(titleText, titleFontSize)) / 2, (screenHeight - 100) / 2, titleFontSize, BLUE);
+
+
+        const char* subtitleText = "Press any key to start game";
+        int subtitleFontSize = 20;
+        DrawText(subtitleText, (screenWidth - MeasureText(subtitleText, subtitleFontSize)) / 2, (screenHeight + 40) / 2, subtitleFontSize, DARKBLUE);
+    EndDrawing();
+}
+
 void GameManager::runPlayingState()
 {
     input();
@@ -189,6 +211,11 @@ void GameManager::runGameOverState()
         DrawText("Press any key to restart...", 20, 220, 20, RED);
         render();
     EndDrawing();
+}
+
+void GameManager::startGame()
+{
+    setState(PLAYING);
 }
 
 bool GameManager::resolveVerticalCollision(Rectangle currRect, Rectangle prevRect, float verticalSpeed, Direction direction, Platform platform)
