@@ -1,5 +1,7 @@
 #pragma once
 
+#include "GameConfig.h"
+#include "MainMenu.h"
 #include "Player.h"
 #include "Enemy.h"
 #include "Platform.h"
@@ -8,23 +10,26 @@
 class GameManager
 {
 private:
+    GameConfig config;
 	const int screenWidth = 800;
     const int screenHeight = 600;
     const int offscreenDeathTolerance = 20;
     bool isRunning = false;
     Player player;
-    std::vector <Platform> *platforms;
+    std::vector <Platform>* platforms;
     std::vector <Enemy>* enemies;
+    MainMenu mainMenu;
     Rectangle collided_platform_rect;
     enum State {
         MAIN_MENU,
         PLAYING,
         GAME_OVER,
+        EXIT_GAME
     };
     GameManager::State state;
 
 public:
-    GameManager(Player player, std::vector<Enemy>* enemies, std::vector<Platform>* platforms);
+    GameManager(GameConfig config, MainMenu mainMenu, Player player, std::vector<Enemy>* enemies, std::vector<Platform>* platforms);
 
     // core
     void input();
@@ -37,9 +42,11 @@ public:
     void runMainMenuState();
     void runPlayingState();
     void runGameOverState();
+    void runExitGameState();
     void setState(GameManager::State state);
     void startGame();
     void restart();
+    void exitGame();
 
     // collision
     void checkCollisionEntities(Player& player, const Enemy& enemy);

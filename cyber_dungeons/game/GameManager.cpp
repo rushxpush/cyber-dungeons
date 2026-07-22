@@ -1,14 +1,18 @@
 #include "GameManager.h"
+#include "MainMenu.h"
 #include "Player.h"
 #include "Enemy.h"
 #include "Platform.h"
 #include "Direction.h"
+#include "Action.h"
 #include <vector>
 
-GameManager::GameManager(Player player, std::vector<Enemy> *enemies, std::vector<Platform> *platforms) : 
+GameManager::GameManager(GameConfig config, MainMenu mainMenu, Player player, std::vector<Enemy> *enemies, std::vector<Platform> *platforms) : 
+    config(config),
     player(player), 
     enemies(enemies),
     platforms(platforms), 
+    mainMenu(mainMenu),
     collided_platform_rect(-1, -1, -1, -1),
     //state(PLAYING){}
     state(MAIN_MENU){}
@@ -130,8 +134,6 @@ void GameManager::render() {
 }
 
 void GameManager::run() {
-    InitWindow(screenWidth, screenHeight, "Cyber Dungeons!");
-    SetTargetFPS(60);
     isRunning = true;
 
     while (!WindowShouldClose() && isRunning)
@@ -147,10 +149,14 @@ void GameManager::run() {
             case GAME_OVER:
                 runGameOverState();
                 break;
+            case EXIT_GAME:
+                runExitGameState();
             default:
                 break;
         }
     }
+
+    CloseWindow();
 }
 
 void GameManager::restart()
@@ -171,22 +177,23 @@ GameManager::State GameManager::getState()
 
 void GameManager::runMainMenuState()
 {
-    if (GetKeyPressed() > 0)
+    mainMenu.input();
+    mainMenu.update();
+    mainMenu.render();
+
+
+    switch (mainMenu.getAction())
     {
+    case Action::START_GAME:
         startGame();
+        break;
+    case Action::ENTER_SETTINGS:
+        // TO DO
+        break;
+    case Action::EXIT_GAME:
+        exitGame();
+        break;
     }
-
-    BeginDrawing();
-        ClearBackground(RAYWHITE);
-        const char* titleText = "Cyber Dungeons";
-        int titleFontSize = 40;
-        DrawText(titleText, (screenWidth - MeasureText(titleText, titleFontSize)) / 2, (screenHeight - 100) / 2, titleFontSize, BLUE);
-
-
-        const char* subtitleText = "Press any key to start game";
-        int subtitleFontSize = 20;
-        DrawText(subtitleText, (screenWidth - MeasureText(subtitleText, subtitleFontSize)) / 2, (screenHeight + 40) / 2, subtitleFontSize, DARKBLUE);
-    EndDrawing();
 }
 
 void GameManager::runPlayingState()
@@ -213,9 +220,19 @@ void GameManager::runGameOverState()
     EndDrawing();
 }
 
+void GameManager::runExitGameState()
+{
+    isRunning = false;
+}
+
 void GameManager::startGame()
 {
     setState(PLAYING);
+}
+
+void GameManager::exitGame()
+{
+    setState(EXIT_GAME);
 }
 
 bool GameManager::resolveVerticalCollision(Rectangle currRect, Rectangle prevRect, float verticalSpeed, Direction direction, Platform platform)

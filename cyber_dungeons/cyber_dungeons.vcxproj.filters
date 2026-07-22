@@ -28,6 +28,9 @@
     <Filter Include="game">
       <UniqueIdentifier>{aa8741ce-49f9-4107-a3d7-669bb8948f85}</UniqueIdentifier>
     </Filter>
+    <Filter Include="ui">
+      <UniqueIdentifier>{970c504b-68b2-45ab-aa42-27d99d4851d5}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="main.cpp">
@@ -43,6 +46,9 @@
       <Filter>platform</Filter>
     </ClCompile>
     <ClCompile Include="game\GameManager.cpp">
+      <Filter>game</Filter>
+    </ClCompile>
+    <ClCompile Include="game\MainMenu.cpp">
       <Filter>game</Filter>
     </ClCompile>
   </ItemGroup>
@@ -72,6 +78,18 @@
       <Filter>game</Filter>
     </ClInclude>
     <ClInclude Include="core\Direction.h">
+      <Filter>core</Filter>
+    </ClInclude>
+    <ClInclude Include="game\MainMenu.h">
+      <Filter>game</Filter>
+    </ClInclude>
+    <ClInclude Include="core\Action.h">
+      <Filter>core</Filter>
+    </ClInclude>
+    <ClInclude Include="ui\Button.h">
+      <Filter>ui</Filter>
+    </ClInclude>
+    <ClInclude Include="core\GameConfig.h">
       <Filter>core</Filter>
     </ClInclude>
   </ItemGroup>
