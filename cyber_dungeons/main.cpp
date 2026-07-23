@@ -6,6 +6,7 @@
 #include "GameConfig.h"
 #include "GameManager.h"
 #include "MainMenu.h"
+#include "GameCamera.h"
 #include "Player.h"
 #include "Enemy.h"
 #include "Platform.h"
@@ -16,7 +17,7 @@
 
 int main()
 {
-    GameConfig config{ 800, 600, "Cyber Dungeons!" };
+    GameConfig config{ 1024, 768, "Cyber Dungeons!" };
 
     //struct ButtonData {
     //    Vector2 position;
@@ -94,6 +95,7 @@ int main()
     }
 
     MainMenu mainMenu{ config, options };
+    GameCamera camera{};
 
     Player player{ 160, 200, 20, 20, 0, 0 };
 
@@ -114,7 +116,7 @@ int main()
         Platform(350, 350, 20, 20),
         Platform(700, 300, 180, 20),
     };
-    GameManager game{ config, mainMenu, player, &enemies, &platforms };
+    GameManager game{ config, mainMenu, player, &enemies, &platforms, camera };
     player.getData();
     game.run();
 

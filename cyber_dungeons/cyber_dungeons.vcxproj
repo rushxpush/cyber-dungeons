@@ -130,6 +130,7 @@
   </ItemDefinitionGroup>
   <ItemGroup>
     <ClCompile Include="enemy\Enemy.cpp" />
+    <ClCompile Include="game\GameCamera.cpp" />
     <ClCompile Include="game\GameManager.cpp" />
     <ClCompile Include="game\MainMenu.cpp" />
     <ClCompile Include="main.cpp" />
@@ -145,6 +146,7 @@
     <ClInclude Include="core\GameConfig.h" />
     <ClInclude Include="core\Stats.h" />
     <ClInclude Include="enemy\Enemy.h" />
+    <ClInclude Include="game\GameCamera.h" />
     <ClInclude Include="game\GameManager.h" />
     <ClInclude Include="game\MainMenu.h" />
     <ClInclude Include="platform\Platform.h" />

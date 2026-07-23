@@ -5,6 +5,7 @@
 #include "Coordinates.h"
 #include <iostream>
 #include <string>
+#include <cmath>
 
 Player::Player(float x, float y, float width, float height, int directionX, int directionY) :
     body(x, y, width, height, 0.f, directionX, directionY),
@@ -23,11 +24,11 @@ void Player::render()
 
     if (!isPlayerAlive())
     {
-        DrawRectangle(body.getRect().x, body.getRect().y, body.getRect().width, body.getRect().height, DARKGRAY);
+        DrawRectangle(std::floor(body.getRect().x), std::floor(body.getRect().y), std::floor(body.getRect().width), std::floor(body.getRect().height), DARKGRAY);
 
         if (shouldPlayerBlink())
         {
-            DrawRectangle(body.getRect().x, body.getRect().y, body.getRect().width, body.getRect().height, RED);
+            DrawRectangle(std::floor(body.getRect().x), std::floor(body.getRect().y), std::floor(body.getRect().width), std::floor(body.getRect().height), RED);
         }
     }
 
@@ -35,11 +36,11 @@ void Player::render()
     {
         if (shouldPlayerBlink())
         {
-            DrawRectangle(body.getRect().x, body.getRect().y, body.getRect().width, body.getRect().height, DARKBLUE);
+            DrawRectangle(std::floor(body.getRect().x), std::floor(body.getRect().y), std::floor(body.getRect().width), std::floor(body.getRect().height), DARKBLUE);
         }
     }
     else {
-        DrawRectangle(body.getRect().x, body.getRect().y, body.getRect().width, body.getRect().height, DARKGREEN);
+        DrawRectangle(std::floor(body.getRect().x), std::floor(body.getRect().y), std::floor(body.getRect().width), std::floor(body.getRect().height), DARKGREEN);
     }
 }
 

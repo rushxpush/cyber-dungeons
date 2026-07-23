@@ -1,5 +1,6 @@
 #include "GameManager.h"
 #include "MainMenu.h"
+#include "GameCamera.h"
 #include "Player.h"
 #include "Enemy.h"
 #include "Platform.h"
@@ -7,15 +8,16 @@
 #include "Action.h"
 #include <vector>
 
-GameManager::GameManager(GameConfig config, MainMenu mainMenu, Player player, std::vector<Enemy> *enemies, std::vector<Platform> *platforms) : 
+GameManager::GameManager(GameConfig config, MainMenu mainMenu, Player player, std::vector<Enemy> *enemies, std::vector<Platform> *platforms, GameCamera camera) : 
     config(config),
     player(player), 
     enemies(enemies),
     platforms(platforms), 
     mainMenu(mainMenu),
     collided_platform_rect(-1, -1, -1, -1),
-    //state(PLAYING){}
-    state(MAIN_MENU){}
+    //state(PLAYING),
+    state(MAIN_MENU),
+    camera(camera) {}
 
 void GameManager::input() 
 {
@@ -26,7 +28,9 @@ void GameManager::update() {
     std::vector <Enemy> enemiesPreviousRect;
 
     player.update();
-    checkOffscreenFall(player);
+    camera.update();
+    camera.setCameraPosition(std::floor(player.getRect().x), std::floor(player.getRect().y));
+    //checkOffscreenFall(player);
 
     for (Enemy& enemy : *enemies)
     {
@@ -200,10 +204,21 @@ void GameManager::runPlayingState()
 {
     input();
     update();
+    renderPlayingState();
+}
+
+
+void GameManager::renderPlayingState()
+{
     BeginDrawing();
         ClearBackground(RAYWHITE);
-        render();
+
+        BeginMode2D(camera.getCamera());
+            render();
+        EndMode2D();
+
     EndDrawing();
+
 }
 
 void GameManager::runGameOverState()

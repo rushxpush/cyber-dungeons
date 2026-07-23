@@ -2,6 +2,7 @@
 
 #include "GameConfig.h"
 #include "MainMenu.h"
+#include "GameCamera.h"
 #include "Player.h"
 #include "Enemy.h"
 #include "Platform.h"
@@ -19,6 +20,7 @@ private:
     std::vector <Platform>* platforms;
     std::vector <Enemy>* enemies;
     MainMenu mainMenu;
+    GameCamera camera;
     Rectangle collided_platform_rect;
     enum State {
         MAIN_MENU,
@@ -29,12 +31,13 @@ private:
     GameManager::State state;
 
 public:
-    GameManager(GameConfig config, MainMenu mainMenu, Player player, std::vector<Enemy>* enemies, std::vector<Platform>* platforms);
+    GameManager(GameConfig config, MainMenu mainMenu, Player player, std::vector<Enemy>* enemies, std::vector<Platform>* platforms, GameCamera camera);
 
     // core
     void input();
     void update();
     void render();
+    void renderPlayingState();
     void run();
 
     // state
