@@ -28,8 +28,6 @@ void GameManager::update() {
     std::vector <Enemy> enemiesPreviousRect;
 
     player.update();
-    camera.update();
-    camera.setCameraPosition(std::floor(player.getRect().x), std::floor(player.getRect().y));
     //checkOffscreenFall(player);
 
     for (Enemy& enemy : *enemies)
@@ -100,6 +98,9 @@ void GameManager::update() {
             }
         }
     }
+    
+    camera.update();
+    camera.setCameraPosition(std::floor(player.getRect().x), std::floor(player.getRect().y));
 }
 
 void GameManager::checkCollisionEntities(Player& player, const Enemy& enemy)
