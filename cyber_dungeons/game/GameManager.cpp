@@ -1,6 +1,7 @@
 #include "GameManager.h"
 #include "MainMenu.h"
 #include "GameCamera.h"
+#include "Background.h"
 #include "Player.h"
 #include "Enemy.h"
 #include "Platform.h"
@@ -8,15 +9,16 @@
 #include "Action.h"
 #include <vector>
 
-GameManager::GameManager(GameConfig config, MainMenu mainMenu, Player player, std::vector<Enemy> *enemies, std::vector<Platform> *platforms, GameCamera camera) : 
+GameManager::GameManager(GameConfig config, MainMenu mainMenu, Background background, Player player, std::vector<Enemy>* enemies, std::vector<Platform>* platforms, GameCamera camera) :
     config(config),
+    background(background),
     player(player), 
     enemies(enemies),
     platforms(platforms), 
     mainMenu(mainMenu),
     collided_platform_rect(-1, -1, -1, -1),
-    state(PLAYING),
-    //state(MAIN_MENU),
+    //state(PLAYING),
+    state(MAIN_MENU),
     camera(camera) {}
 
 void GameManager::input() 
@@ -216,6 +218,7 @@ void GameManager::renderPlayingState()
     BeginDrawing();
         ClearBackground(RAYWHITE);
 
+        background.render();
         BeginMode2D(camera.getCamera());
             render();
         EndMode2D();
@@ -326,6 +329,7 @@ bool GameManager::resolveHorizontalCollision(Rectangle currRect, Rectangle prevR
 
 void GameManager::destroy() const
 {
+    background.destroy();
     player.destroy();
 
     for (const auto& enemy : *enemies)

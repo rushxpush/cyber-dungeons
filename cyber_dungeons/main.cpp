@@ -7,6 +7,7 @@
 #include "GameManager.h"
 #include "MainMenu.h"
 #include "GameCamera.h"
+#include "Background.h"
 #include "Player.h"
 #include "Enemy.h"
 #include "Platform.h"
@@ -97,6 +98,8 @@ int main()
     MainMenu mainMenu{ config, options };
     GameCamera camera{};
 
+    Background background{config.screenWidth, config.screenHeight};
+
     Player player{ 160, 200, 20, 20, 0, 0 };
 
     std::vector<Enemy> enemies = {
@@ -117,7 +120,7 @@ int main()
         Platform(700, 300, 180, 20),
         Platform(750, 300, 180, 40),
     };
-    GameManager game{ config, mainMenu, player, &enemies, &platforms, camera };
+    GameManager game{ config, mainMenu, background, player, &enemies, &platforms, camera };
     player.getData();
     game.run();
 

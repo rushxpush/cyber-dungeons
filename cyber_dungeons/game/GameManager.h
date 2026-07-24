@@ -2,6 +2,7 @@
 
 #include "GameConfig.h"
 #include "MainMenu.h"
+#include "Background.h"
 #include "GameCamera.h"
 #include "Player.h"
 #include "Enemy.h"
@@ -16,6 +17,7 @@ private:
     const int screenHeight = 600;
     const int offscreenDeathTolerance = 20;
     bool isRunning = false;
+    Background background;
     Player player;
     std::vector <Platform>* platforms;
     std::vector <Enemy>* enemies;
@@ -31,7 +33,7 @@ private:
     GameManager::State state;
 
 public:
-    GameManager(GameConfig config, MainMenu mainMenu, Player player, std::vector<Enemy>* enemies, std::vector<Platform>* platforms, GameCamera camera);
+    GameManager(GameConfig config, MainMenu mainMenu, Background background, Player player, std::vector<Enemy>* enemies, std::vector<Platform>* platforms, GameCamera camera);
 
     // core
     void input();

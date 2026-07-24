@@ -31,6 +31,9 @@
     <Filter Include="ui">
       <UniqueIdentifier>{970c504b-68b2-45ab-aa42-27d99d4851d5}</UniqueIdentifier>
     </Filter>
+    <Filter Include="background">
+      <UniqueIdentifier>{c9240dee-375f-4aad-9b1b-9ef1bc891457}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="main.cpp">
@@ -56,6 +59,9 @@
     </ClCompile>
     <ClCompile Include="game\TextureManager.cpp">
       <Filter>game</Filter>
+    </ClCompile>
+    <ClCompile Include="background\Background.cpp">
+      <Filter>background</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
@@ -103,6 +109,9 @@
     </ClInclude>
     <ClInclude Include="game\TextureManager.h">
       <Filter>game</Filter>
+    </ClInclude>
+    <ClInclude Include="background\Background.h">
+      <Filter>background</Filter>
     </ClInclude>
   </ItemGroup>
 </Project>

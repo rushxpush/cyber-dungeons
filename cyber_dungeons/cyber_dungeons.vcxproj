@@ -105,7 +105,7 @@
       <PreprocessorDefinitions>_DEBUG;_CONSOLE;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <ConformanceMode>true</ConformanceMode>
       <LanguageStandard>stdcpp20</LanguageStandard>
-      <AdditionalIncludeDirectories>C:\Projects\Cpp\games\cyber-dungeons\cyber_dungeons\cyber_dungeons\ui;C:\Projects\Cpp\games\cyber-dungeons\cyber_dungeons\cyber_dungeons\game;C:\Projects\Cpp\games\cyber-dungeons\cyber_dungeons\cyber_dungeons\platform;C:\Projects\Cpp\games\cyber-dungeons\cyber_dungeons\cyber_dungeons\core;C:\Projects\Cpp\games\cyber-dungeons\cyber_dungeons\cyber_dungeons\enemy;C:\Projects\Cpp\games\cyber-dungeons\cyber_dungeons\cyber_dungeons\player;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>C:\Projects\Cpp\games\cyber-dungeons\cyber_dungeons\cyber_dungeons\background;C:\Projects\Cpp\games\cyber-dungeons\cyber_dungeons\cyber_dungeons\ui;C:\Projects\Cpp\games\cyber-dungeons\cyber_dungeons\cyber_dungeons\game;C:\Projects\Cpp\games\cyber-dungeons\cyber_dungeons\cyber_dungeons\platform;C:\Projects\Cpp\games\cyber-dungeons\cyber_dungeons\cyber_dungeons\core;C:\Projects\Cpp\games\cyber-dungeons\cyber_dungeons\cyber_dungeons\enemy;C:\Projects\Cpp\games\cyber-dungeons\cyber_dungeons\cyber_dungeons\player;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
     </ClCompile>
     <Link>
       <SubSystem>Console</SubSystem>
@@ -129,6 +129,7 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
+    <ClCompile Include="background\Background.cpp" />
     <ClCompile Include="enemy\Enemy.cpp" />
     <ClCompile Include="game\GameCamera.cpp" />
     <ClCompile Include="game\GameManager.cpp" />
@@ -139,6 +140,7 @@
     <ClCompile Include="player\Player.cpp" />
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="background\Background.h" />
     <ClInclude Include="core\Action.h" />
     <ClInclude Include="core\Body.h" />
     <ClInclude Include="core\Coordinates.h" />
