@@ -18,6 +18,8 @@ private:
     Flags flags;
     Coordinates respawnPosition;
 
+    Texture2D texture;
+
 public:
     enum State {
         ON_GROUND,
@@ -39,6 +41,7 @@ public:
     void input();
     void update();
     void render();
+    void destroy() const;
 
     // lifecycle
     void die();

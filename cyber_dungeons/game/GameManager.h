@@ -39,6 +39,7 @@ public:
     void render();
     void renderPlayingState();
     void run();
+    void destroy() const;
 
     // state
     State getState();

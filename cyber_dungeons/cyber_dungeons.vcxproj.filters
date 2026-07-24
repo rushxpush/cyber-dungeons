@@ -54,6 +54,9 @@
     <ClCompile Include="game\GameCamera.cpp">
       <Filter>game</Filter>
     </ClCompile>
+    <ClCompile Include="game\TextureManager.cpp">
+      <Filter>game</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="core\Body.h">
@@ -96,6 +99,9 @@
       <Filter>core</Filter>
     </ClInclude>
     <ClInclude Include="game\GameCamera.h">
+      <Filter>game</Filter>
+    </ClInclude>
+    <ClInclude Include="game\TextureManager.h">
       <Filter>game</Filter>
     </ClInclude>
   </ItemGroup>

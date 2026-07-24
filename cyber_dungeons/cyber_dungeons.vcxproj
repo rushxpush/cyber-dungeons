@@ -133,6 +133,7 @@
     <ClCompile Include="game\GameCamera.cpp" />
     <ClCompile Include="game\GameManager.cpp" />
     <ClCompile Include="game\MainMenu.cpp" />
+    <ClCompile Include="game\TextureManager.cpp" />
     <ClCompile Include="main.cpp" />
     <ClCompile Include="platform\Platform.cpp" />
     <ClCompile Include="player\Player.cpp" />
@@ -149,6 +150,7 @@
     <ClInclude Include="game\GameCamera.h" />
     <ClInclude Include="game\GameManager.h" />
     <ClInclude Include="game\MainMenu.h" />
+    <ClInclude Include="game\TextureManager.h" />
     <ClInclude Include="platform\Platform.h" />
     <ClInclude Include="player\Player.h" />
     <ClInclude Include="ui\Button.h" />

@@ -16,6 +16,8 @@ private:
     Stats stats;
     Flags flags;
 
+    Texture2D texture;
+
 public:
     enum State {
         ON_GROUND,
@@ -29,6 +31,7 @@ public:
     // core
     void render() const;
     void update();
+    void destroy() const;
 
     // lifecycle
 

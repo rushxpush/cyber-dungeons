@@ -13,12 +13,17 @@ Enemy::Enemy(float x, float y, float width, float height, int directionX, int di
     max_falling_speed(10.f), 
     jumping_speed(-3.f),
     current_state(FALLING), 
-    flags(true, true, true, false) {}
+    flags(true, true, true, false) 
+    {
+        Image playerImage = LoadImage("resources/images/enemy.png");
+        texture = LoadTextureFromImage(playerImage);
+        UnloadImage(playerImage);
+    }
 
 void Enemy::render() const
 {
     displayDebug();
-    DrawRectangle(body.getRect().x, body.getRect().y, body.getRect().width, body.getRect().height, RED);
+    DrawTexture(texture, std::floor(body.getRect().x), std::floor(body.getRect().y), WHITE);
 }
 
 Rectangle Enemy::getRect() const
@@ -153,4 +158,9 @@ int Enemy::getHp() const
 int Enemy::getStrength() const
 {
     return stats.getStrength();
+}
+
+void Enemy::destroy() const
+{
+    UnloadTexture(texture);
 }

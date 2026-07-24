@@ -105,16 +105,17 @@ int main()
     };
 
     std::vector<Platform> platforms = {
-        Platform(150, 100, 180, 20),
+        Platform(150, 100, 180, 60),
         Platform(150, 300, 100, 20),
         Platform(250, 280, 100, 20),
         Platform(250, 400, 100, 20),
-        Platform(180, 450, 50, 20),
-        Platform(500, 475, 50, 20),
-        Platform(280, 550, 50, 20),
+        Platform(180, 450, 40, 20),
+        Platform(500, 475, 40, 20),
+        Platform(280, 550, 40, 20),
         Platform(450, 540, 100, 20),
         Platform(350, 350, 20, 20),
         Platform(700, 300, 180, 20),
+        Platform(750, 300, 180, 40),
     };
     GameManager game{ config, mainMenu, player, &enemies, &platforms, camera };
     player.getData();

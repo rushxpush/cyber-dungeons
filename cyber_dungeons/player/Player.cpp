@@ -16,7 +16,11 @@ Player::Player(float x, float y, float width, float height, int directionX, int 
     jumping_speed(-3.f),
     current_state(FALLING), 
     flags(true, true, true, true),
-    respawnPosition(x, y) {}
+    respawnPosition(x, y) {
+        Image playerImage = LoadImage("resources/images/player.png");
+        texture = LoadTextureFromImage(playerImage);
+        UnloadImage(playerImage);
+    }
 
 void Player::render()
 {
@@ -24,7 +28,7 @@ void Player::render()
 
     if (!isPlayerAlive())
     {
-        DrawRectangle(std::floor(body.getRect().x), std::floor(body.getRect().y), std::floor(body.getRect().width), std::floor(body.getRect().height), DARKGRAY);
+        DrawTexture(texture, std::floor(body.getRect().x), std::floor(body.getRect().y), WHITE);
 
         if (shouldPlayerBlink())
         {
@@ -36,11 +40,12 @@ void Player::render()
     {
         if (shouldPlayerBlink())
         {
-            DrawRectangle(std::floor(body.getRect().x), std::floor(body.getRect().y), std::floor(body.getRect().width), std::floor(body.getRect().height), DARKBLUE);
+            //DrawRectangle(std::floor(body.getRect().x), std::floor(body.getRect().y), std::floor(body.getRect().width), std::floor(body.getRect().height), DARKBLUE);
+            DrawTexture(texture, std::floor(body.getRect().x), std::floor(body.getRect().y), WHITE);
         }
     }
     else {
-        DrawRectangle(std::floor(body.getRect().x), std::floor(body.getRect().y), std::floor(body.getRect().width), std::floor(body.getRect().height), DARKGREEN);
+        DrawTexture(texture, std::floor(body.getRect().x), std::floor(body.getRect().y), WHITE);
     }
 }
 
@@ -287,6 +292,11 @@ void Player::updateCooldowns()
 {
     stats.decreaseDamageDashTimer();
     stats.decreaseRespawnDashTimer();
+}
+
+void Player::destroy() const
+{
+    UnloadTexture(texture);
 }
 
 void Player::displayDebug() const

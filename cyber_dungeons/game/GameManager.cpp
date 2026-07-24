@@ -15,8 +15,8 @@ GameManager::GameManager(GameConfig config, MainMenu mainMenu, Player player, st
     platforms(platforms), 
     mainMenu(mainMenu),
     collided_platform_rect(-1, -1, -1, -1),
-    //state(PLAYING),
-    state(MAIN_MENU),
+    state(PLAYING),
+    //state(MAIN_MENU),
     camera(camera) {}
 
 void GameManager::input() 
@@ -160,6 +160,8 @@ void GameManager::run() {
                 break;
         }
     }
+
+    destroy();
 
     CloseWindow();
 }
@@ -319,5 +321,20 @@ bool GameManager::resolveHorizontalCollision(Rectangle currRect, Rectangle prevR
             return true;
         }
         return false;
+    }
+}
+
+void GameManager::destroy() const
+{
+    player.destroy();
+
+    for (const auto& enemy : *enemies)
+    {
+        enemy.destroy();
+    }
+
+    for (const auto& platform : *platforms)
+    {
+        platform.destroy();
     }
 }
