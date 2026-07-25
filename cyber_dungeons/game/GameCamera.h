@@ -23,5 +23,5 @@ public:
 
 	Camera2D getCamera() const;
 
-	void setCameraPosition(float x, float y);
+	void setCameraPosition(float x, float y, float offsetX, float offsetY);
 };

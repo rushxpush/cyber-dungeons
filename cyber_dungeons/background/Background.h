@@ -8,13 +8,13 @@ class Background
 private:
 	int screenWidth;
 	int screenHeight;
+	const char* imagePath;
 
 	Texture2D texture;
-
 public:
-	Background(int screenWidth, int screenHeight);
+	Background(int screenWidth, int screenHeight, const char* imagePath);
 
 	// core
 	void render() const;
-	void destroy() const;
+	void destroy();
 };

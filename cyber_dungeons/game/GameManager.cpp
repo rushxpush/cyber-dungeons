@@ -1,4 +1,5 @@
 #include "GameManager.h"
+#include "BackgroundSystem.h"
 #include "MainMenu.h"
 #include "GameCamera.h"
 #include "Background.h"
@@ -9,17 +10,24 @@
 #include "Action.h"
 #include <vector>
 
-GameManager::GameManager(GameConfig config, MainMenu mainMenu, Background background, Player player, std::vector<Enemy>* enemies, std::vector<Platform>* platforms, GameCamera camera) :
+GameManager::GameManager
+(
+    GameConfig config, 
+    BackgroundSystem backgroundSystem,
+    MainMenu mainMenu, 
+    Player player, 
+    std::vector<Enemy>* enemies, 
+    std::vector<Platform>* platforms
+) :
     config(config),
-    background(background),
+    backgroundSystem(backgroundSystem),
+    mainMenu(mainMenu),
     player(player), 
     enemies(enemies),
     platforms(platforms), 
-    mainMenu(mainMenu),
     collided_platform_rect(-1, -1, -1, -1),
-    //state(PLAYING),
-    state(MAIN_MENU),
-    camera(camera) {}
+    //state(PLAYING) {}
+    state(MAIN_MENU) {}
 
 void GameManager::input() 
 {
@@ -102,7 +110,7 @@ void GameManager::update() {
     }
     
     camera.update();
-    camera.setCameraPosition(std::floor(player.getRect().x), std::floor(player.getRect().y));
+    camera.setCameraPosition(std::floor(player.getRect().x), std::floor(player.getRect().y), 0, 0);
 }
 
 void GameManager::checkCollisionEntities(Player& player, const Enemy& enemy)
@@ -218,7 +226,7 @@ void GameManager::renderPlayingState()
     BeginDrawing();
         ClearBackground(RAYWHITE);
 
-        background.render();
+        backgroundSystem.render();
         BeginMode2D(camera.getCamera());
             render();
         EndMode2D();
@@ -327,9 +335,11 @@ bool GameManager::resolveHorizontalCollision(Rectangle currRect, Rectangle prevR
     }
 }
 
-void GameManager::destroy() const
+void GameManager::destroy()
 {
-    background.destroy();
+    //gameBackgrounds[Background::Layer::SKY].destroy();
+    //gameBackgrounds[Background::Layer::FAR].destroy();
+
     player.destroy();
 
     for (const auto& enemy : *enemies)

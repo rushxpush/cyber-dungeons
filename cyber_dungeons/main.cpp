@@ -3,9 +3,11 @@
 #include <string>
 #include <iterator>
 #include <vector>
+#include <unordered_map>
 #include "GameConfig.h"
 #include "GameManager.h"
 #include "MainMenu.h"
+#include "BackgroundSystem.h"
 #include "GameCamera.h"
 #include "Background.h"
 #include "Player.h"
@@ -96,9 +98,16 @@ int main()
     }
 
     MainMenu mainMenu{ config, options };
+
     GameCamera camera{};
 
-    Background background{config.screenWidth, config.screenHeight};
+    Background backgroundSky = Background{ config.screenWidth, config.screenHeight, "resources/images/sky.png" };
+    Background backgroundFar = Background{ config.screenWidth, config.screenHeight, "resources/images/background.png" };
+
+    BackgroundSystem backgroundSystem;
+
+    backgroundSystem.createLayer(camera, backgroundSky);
+    backgroundSystem.createLayer(camera, backgroundFar);
 
     Player player{ 160, 200, 20, 20, 0, 0 };
 
@@ -120,7 +129,7 @@ int main()
         Platform(700, 300, 180, 20),
         Platform(750, 300, 180, 40),
     };
-    GameManager game{ config, mainMenu, background, player, &enemies, &platforms, camera };
+    GameManager game{ config, backgroundSystem, mainMenu, player, &enemies, &platforms };
     player.getData();
     game.run();
 

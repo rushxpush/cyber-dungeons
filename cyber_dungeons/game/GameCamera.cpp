@@ -6,7 +6,7 @@ void GameCamera::update()
 {
 }
 
-void GameCamera::setCameraPosition(float x, float y)
+void GameCamera::setCameraPosition(float x, float y, float offsetX, float offsetY)
 {
 	camera.target.x = x;
 	camera.target.y = y;

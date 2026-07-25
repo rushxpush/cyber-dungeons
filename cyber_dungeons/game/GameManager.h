@@ -1,6 +1,7 @@
 #pragma once
 
 #include "GameConfig.h"
+#include "BackgroundSystem.h"
 #include "MainMenu.h"
 #include "Background.h"
 #include "GameCamera.h"
@@ -8,6 +9,7 @@
 #include "Enemy.h"
 #include "Platform.h"
 #include <vector>
+#include <unordered_map>
 
 class GameManager
 {
@@ -17,12 +19,13 @@ private:
     const int screenHeight = 600;
     const int offscreenDeathTolerance = 20;
     bool isRunning = false;
-    Background background;
+    BackgroundSystem backgroundSystem;
     Player player;
     std::vector <Platform>* platforms;
     std::vector <Enemy>* enemies;
     MainMenu mainMenu;
     GameCamera camera;
+    GameCamera skyCamera;
     Rectangle collided_platform_rect;
     enum State {
         MAIN_MENU,
@@ -33,7 +36,15 @@ private:
     GameManager::State state;
 
 public:
-    GameManager(GameConfig config, MainMenu mainMenu, Background background, Player player, std::vector<Enemy>* enemies, std::vector<Platform>* platforms, GameCamera camera);
+    GameManager
+    (
+        GameConfig config, 
+        BackgroundSystem backgroundSystem,
+        MainMenu mainMenu, 
+        Player player, 
+        std::vector<Enemy>* enemies, 
+        std::vector<Platform>* platforms
+    );
 
     // core
     void input();
@@ -41,7 +52,7 @@ public:
     void render();
     void renderPlayingState();
     void run();
-    void destroy() const;
+    void destroy();
 
     // state
     State getState();
