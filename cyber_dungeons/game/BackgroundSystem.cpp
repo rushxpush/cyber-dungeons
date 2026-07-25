@@ -26,3 +26,11 @@ void BackgroundSystem::createLayer(GameCamera camera, Background background)
 	layers.emplace_back(layer);
 }
 
+void BackgroundSystem::destroyLayers()
+{
+	for (const auto& layer : layers)
+	{
+		layer.background.destroy();
+	}
+}
+

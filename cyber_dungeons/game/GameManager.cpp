@@ -337,9 +337,6 @@ bool GameManager::resolveHorizontalCollision(Rectangle currRect, Rectangle prevR
 
 void GameManager::destroy()
 {
-    //gameBackgrounds[Background::Layer::SKY].destroy();
-    //gameBackgrounds[Background::Layer::FAR].destroy();
-
     player.destroy();
 
     for (const auto& enemy : *enemies)
@@ -351,4 +348,6 @@ void GameManager::destroy()
     {
         platform.destroy();
     }
+
+    backgroundSystem.destroyLayers();
 }

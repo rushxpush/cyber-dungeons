@@ -16,5 +16,5 @@ public:
 
 	// core
 	void render() const;
-	void destroy();
+	void destroy() const;
 };

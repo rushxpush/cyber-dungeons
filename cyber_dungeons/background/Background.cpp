@@ -16,6 +16,6 @@ void Background::render() const
 	DrawTexture(texture, 0, 0, WHITE);
 }
 
-void Background::destroy() {
+void Background::destroy() const {
 	UnloadTexture(texture);
 }

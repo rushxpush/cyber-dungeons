@@ -26,4 +26,6 @@ public:
 	void update();
 
 	void createLayer(GameCamera camera, Background background);
+
+	void destroyLayers();
 };
