@@ -15,8 +15,8 @@ class GameManager
 {
 private:
     GameConfig config;
-	const int screenWidth = 800;
-    const int screenHeight = 600;
+	//const int screenWidth;
+    //const int screenHeight;
     const int offscreenDeathTolerance = 20;
     bool isRunning = false;
     BackgroundSystem backgroundSystem;
@@ -24,8 +24,7 @@ private:
     std::vector <Platform>* platforms;
     std::vector <Enemy>* enemies;
     MainMenu mainMenu;
-    GameCamera camera;
-    GameCamera skyCamera;
+    GameCamera mainCamera;
     Rectangle collided_platform_rect;
     enum State {
         MAIN_MENU,
@@ -39,6 +38,7 @@ public:
     GameManager
     (
         GameConfig config, 
+        GameCamera mainCamera,
         BackgroundSystem backgroundSystem,
         MainMenu mainMenu, 
         Player player, 

@@ -3,7 +3,11 @@
 #include "GameCamera.h"
 #include "Background.h"
 
-BackgroundSystem::BackgroundSystem() {};
+BackgroundSystem::BackgroundSystem(float x, float y) 
+{
+	referencePoint.x = x;
+	referencePoint.y = y;
+};
 
 void BackgroundSystem::render()
 {
@@ -17,12 +21,34 @@ void BackgroundSystem::render()
 
 void BackgroundSystem::update()
 {
-	// 
+	for (auto& layer : layers)
+	{
+		switch (layer.zPosition)
+		{
+		case ZPosition::SKY:
+			break;
+		case ZPosition::FAR:
+			layer.camera.setCameraPosition(referencePoint.x * 0.1, referencePoint.y * 0.1, 0, 0);
+			break;
+		case ZPosition::MEDIUM:
+			layer.camera.setCameraPosition(referencePoint.x * 0.2, referencePoint.y * 0.2, 0, 0);
+			break;
+		case ZPosition::NEAR:
+			layer.camera.setCameraPosition(referencePoint.x * 0.3, referencePoint.y * 0.3, 0, 0);
+			break;
+		}
+	}
 }
 
-void BackgroundSystem::createLayer(GameCamera camera, Background background)
+void BackgroundSystem::setReferencePoint(float x, float y)
 {
-	Layer layer = Layer{ camera, background };
+	referencePoint.x = x;
+	referencePoint.y = y;
+}
+
+void BackgroundSystem::createLayer(GameCamera camera, Background background, ZPosition zPosition)
+{
+	Layer layer = Layer{ camera, background, zPosition };
 	layers.emplace_back(layer);
 }
 

@@ -13,6 +13,7 @@
 GameManager::GameManager
 (
     GameConfig config, 
+    GameCamera mainCamera,
     BackgroundSystem backgroundSystem,
     MainMenu mainMenu, 
     Player player, 
@@ -20,6 +21,7 @@ GameManager::GameManager
     std::vector<Platform>* platforms
 ) :
     config(config),
+    mainCamera(mainCamera),
     backgroundSystem(backgroundSystem),
     mainMenu(mainMenu),
     player(player), 
@@ -109,8 +111,19 @@ void GameManager::update() {
         }
     }
     
-    camera.update();
-    camera.setCameraPosition(std::floor(player.getRect().x), std::floor(player.getRect().y), 0, 0);
+    mainCamera.setCameraPosition(
+        std::floor((player.getRect().x + player.getRect().width / 2.0f) ), 
+        std::floor((player.getRect().y + player.getRect().height / 2.0f) ), 
+        config.screenWidth / 2.0f, 
+        config.screenHeight / 2.0f
+    );
+    mainCamera.update();
+
+    backgroundSystem.setReferencePoint(
+        std::floor((player.getRect().x + player.getRect().width) / 2), 
+        std::floor((player.getRect().y + player.getRect().height) / 2)
+    );
+    backgroundSystem.update();
 }
 
 void GameManager::checkCollisionEntities(Player& player, const Enemy& enemy)
@@ -127,7 +140,7 @@ void GameManager::checkCollisionEntities(Player& player, const Enemy& enemy)
 
 void GameManager::checkOffscreenFall(Player& player)
 {
-    if (player.getRect().y > screenHeight + offscreenDeathTolerance && player.getIsAlive())
+    if (player.getRect().y > config.screenHeight + offscreenDeathTolerance && player.getIsAlive())
     {
         setState(GAME_OVER);
         player.die();
@@ -227,7 +240,8 @@ void GameManager::renderPlayingState()
         ClearBackground(RAYWHITE);
 
         backgroundSystem.render();
-        BeginMode2D(camera.getCamera());
+        player.displayDebug();
+        BeginMode2D(mainCamera.getCamera());
             render();
         EndMode2D();
 
@@ -243,9 +257,13 @@ void GameManager::runGameOverState()
     }
     BeginDrawing();
         ClearBackground(RAYWHITE);
-        DrawText("Game Over", 20, 200, 20, RED);
-        DrawText("Press any key to restart...", 20, 220, 20, RED);
-        render();
+
+        backgroundSystem.render();
+        BeginMode2D(mainCamera.getCamera());
+            render();
+            DrawText("Game Over", 20, 200, 20, RED);
+            DrawText("Press any key to restart...", 20, 220, 20, RED);
+        EndMode2D();
     EndDrawing();
 }
 

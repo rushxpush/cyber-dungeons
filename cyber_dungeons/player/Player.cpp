@@ -24,7 +24,7 @@ Player::Player(float x, float y, float width, float height, int directionX, int 
 
 void Player::render()
 {
-    displayDebug();
+    //displayDebug();
 
     if (!isPlayerAlive())
     {

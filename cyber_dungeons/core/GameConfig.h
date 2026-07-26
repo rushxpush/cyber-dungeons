@@ -14,6 +14,7 @@ struct GameConfig
 	screenHeight(screenHeight),
 	title(title)
 	{
+		SetConfigFlags(FLAG_FULLSCREEN_MODE);
 		InitWindow(screenWidth, screenHeight, title);
 		SetTargetFPS(60);
 	}

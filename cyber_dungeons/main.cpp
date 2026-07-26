@@ -20,7 +20,8 @@
 
 int main()
 {
-    GameConfig config{ 1024, 768, "Cyber Dungeons!" };
+    //GameConfig config{ 1024, 768, "Cyber Dungeons!" };
+    GameConfig config{ 1920, 1080, "Cyber Dungeons!" };
 
     //struct ButtonData {
     //    Vector2 position;
@@ -99,16 +100,6 @@ int main()
 
     MainMenu mainMenu{ config, options };
 
-    GameCamera camera{};
-
-    Background backgroundSky = Background{ config.screenWidth, config.screenHeight, "resources/images/sky.png" };
-    Background backgroundFar = Background{ config.screenWidth, config.screenHeight, "resources/images/background.png" };
-
-    BackgroundSystem backgroundSystem;
-
-    backgroundSystem.createLayer(camera, backgroundSky);
-    backgroundSystem.createLayer(camera, backgroundFar);
-
     Player player{ 160, 200, 20, 20, 0, 0 };
 
     std::vector<Enemy> enemies = {
@@ -129,7 +120,27 @@ int main()
         Platform(700, 300, 180, 20),
         Platform(750, 300, 180, 40),
     };
-    GameManager game{ config, backgroundSystem, mainMenu, player, &enemies, &platforms };
+
+    GameCamera camera{};
+    GameCamera mainCamera{};
+
+    Background backgroundSky = Background{ config.screenWidth, config.screenHeight, "resources/images/sky.png" };
+    Background backgroundFar = Background{ config.screenWidth, config.screenHeight, "resources/images/background_far.png" };
+    Background backgroundMedium = Background{ config.screenWidth, config.screenHeight, "resources/images/background_medium.png" };
+    Background backgroundNear = Background{ config.screenWidth, config.screenHeight, "resources/images/background_near.png" };
+
+    BackgroundSystem backgroundSystem = BackgroundSystem{
+        std::floor((player.getRect().x + player.getRect().width) / 2), 
+        std::floor((player.getRect().y + player.getRect().height) / 2)
+    };
+
+    backgroundSystem.createLayer(camera, backgroundSky, BackgroundSystem::ZPosition::SKY);
+
+    backgroundSystem.createLayer(camera, backgroundFar, BackgroundSystem::ZPosition::FAR);
+    backgroundSystem.createLayer(camera, backgroundMedium, BackgroundSystem::ZPosition::MEDIUM);
+    backgroundSystem.createLayer(camera, backgroundNear, BackgroundSystem::ZPosition::NEAR);
+
+    GameManager game{ config, mainCamera, backgroundSystem, mainMenu, player, &enemies, &platforms };
     player.getData();
     game.run();
 

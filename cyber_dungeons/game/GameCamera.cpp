@@ -10,8 +10,8 @@ void GameCamera::setCameraPosition(float x, float y, float offsetX, float offset
 {
 	camera.target.x = x;
 	camera.target.y = y;
-	camera.offset.x = 600 / 2.0f;
-	camera.offset.y = 600 / 2.0f;
+	camera.offset.x = offsetX;
+	camera.offset.y = offsetY;
 }
 
 Camera2D GameCamera::getCamera() const

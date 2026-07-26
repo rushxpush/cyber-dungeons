@@ -77,11 +77,11 @@ public:
     bool shouldPlayerBlink(int delay = 10);
 
     void getData() const;
+    void displayDebug() const;
 private:
     void storePreviousRect();
     void updateSpeed();
     void updatePosition();
     void updateDirection();
-    void displayDebug() const;
     void setFlag(PlayerFlag flag, bool state);
 };

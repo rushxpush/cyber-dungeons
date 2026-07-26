@@ -16,7 +16,7 @@ public:
 		camera.target.x = 0;
 		camera.target.y = 0;
 		camera.rotation = 0.0f;
-		camera.zoom = 1.5f;
+		camera.zoom = 1.8f;
 	}
 
 	void update();
