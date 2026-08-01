@@ -1,12 +1,21 @@
 #include <raylib.h>
+#include "GameConfig.h"
 #include "BackgroundSystem.h"
 #include "GameCamera.h"
 #include "Background.h"
+#include "iostream"
 
-BackgroundSystem::BackgroundSystem(float x, float y) 
+BackgroundSystem::BackgroundSystem(GameConfig *gameConfig, float x, float y) 
 {
 	referencePoint.x = x;
 	referencePoint.y = y;
+	BackgroundSystem::gameConfig = gameConfig;
+
+	layers.emplace_back(gameConfig->screenWidth, gameConfig->screenHeight, "resources/images/sky.png", Background::ZPosition::SKY, 0.0f);
+	layers.emplace_back(gameConfig->screenWidth, gameConfig->screenHeight, "resources/images/background_far.png", Background::ZPosition::FAR, 0.1f);
+    layers.emplace_back(gameConfig->screenWidth, gameConfig->screenHeight, "resources/images/background_medium.png", Background::ZPosition::MEDIUM, 0.2f);
+	layers.reserve(1);
+	layers.emplace_back(gameConfig->screenWidth, gameConfig->screenHeight, "resources/images/background_near.png", Background::ZPosition::NEAR, 0.3f);
 };
 
 void BackgroundSystem::render()
@@ -23,20 +32,7 @@ void BackgroundSystem::update()
 {
 	for (auto& layer : layers)
 	{
-		switch (layer.zPosition)
-		{
-		case ZPosition::SKY:
-			break;
-		case ZPosition::FAR:
-			layer.camera.setCameraPosition(referencePoint.x * 0.1, referencePoint.y * 0.1, 0, 0);
-			break;
-		case ZPosition::MEDIUM:
-			layer.camera.setCameraPosition(referencePoint.x * 0.2, referencePoint.y * 0.2, 0, 0);
-			break;
-		case ZPosition::NEAR:
-			layer.camera.setCameraPosition(referencePoint.x * 0.3, referencePoint.y * 0.3, 0, 0);
-			break;
-		}
+		layer.camera.setCameraPosition(referencePoint.x * layer.getParallaxFactor(), referencePoint.y * layer.getParallaxFactor(), 0, 0);
 	}
 }
 
@@ -45,18 +41,3 @@ void BackgroundSystem::setReferencePoint(float x, float y)
 	referencePoint.x = x;
 	referencePoint.y = y;
 }
-
-void BackgroundSystem::createLayer(GameCamera camera, Background background, ZPosition zPosition)
-{
-	Layer layer = Layer{ camera, background, zPosition };
-	layers.emplace_back(layer);
-}
-
-void BackgroundSystem::destroyLayers()
-{
-	for (const auto& layer : layers)
-	{
-		layer.background.destroy();
-	}
-}
-

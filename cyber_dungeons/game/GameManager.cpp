@@ -13,8 +13,8 @@
 GameManager::GameManager
 (
     GameConfig config, 
-    GameCamera mainCamera,
-    BackgroundSystem backgroundSystem,
+    GameCamera& mainCamera,
+    BackgroundSystem& backgroundSystem,
     MainMenu mainMenu, 
     Player player, 
     std::vector<Enemy>* enemies, 
@@ -179,8 +179,9 @@ void GameManager::run() {
                 break;
             case EXIT_GAME:
                 runExitGameState();
-            default:
                 break;
+            //default:
+                //break;
         }
     }
 
@@ -366,6 +367,4 @@ void GameManager::destroy()
     {
         platform.destroy();
     }
-
-    backgroundSystem.destroyLayers();
 }

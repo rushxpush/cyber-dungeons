@@ -124,21 +124,11 @@ int main()
     GameCamera camera{};
     GameCamera mainCamera{};
 
-    Background backgroundSky = Background{ config.screenWidth, config.screenHeight, "resources/images/sky.png" };
-    Background backgroundFar = Background{ config.screenWidth, config.screenHeight, "resources/images/background_far.png" };
-    Background backgroundMedium = Background{ config.screenWidth, config.screenHeight, "resources/images/background_medium.png" };
-    Background backgroundNear = Background{ config.screenWidth, config.screenHeight, "resources/images/background_near.png" };
-
-    BackgroundSystem backgroundSystem = BackgroundSystem{
+    BackgroundSystem backgroundSystem = BackgroundSystem{ 
+        &config,
         std::floor((player.getRect().x + player.getRect().width) / 2), 
         std::floor((player.getRect().y + player.getRect().height) / 2)
     };
-
-    backgroundSystem.createLayer(camera, backgroundSky, BackgroundSystem::ZPosition::SKY);
-
-    backgroundSystem.createLayer(camera, backgroundFar, BackgroundSystem::ZPosition::FAR);
-    backgroundSystem.createLayer(camera, backgroundMedium, BackgroundSystem::ZPosition::MEDIUM);
-    backgroundSystem.createLayer(camera, backgroundNear, BackgroundSystem::ZPosition::NEAR);
 
     GameManager game{ config, mainCamera, backgroundSystem, mainMenu, player, &enemies, &platforms };
     player.getData();

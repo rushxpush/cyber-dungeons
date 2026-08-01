@@ -19,6 +19,9 @@ public:
 		camera.zoom = 1.8f;
 	}
 
+	GameCamera(GameCamera&&) noexcept = default;
+	GameCamera& operator=(GameCamera&&) noexcept = default;
+
 	void update();
 
 	Camera2D getCamera() const;

@@ -148,6 +148,7 @@
     <ClInclude Include="core\Direction.h" />
     <ClInclude Include="core\Flags.h" />
     <ClInclude Include="core\GameConfig.h" />
+    <ClInclude Include="core\Layer.h" />
     <ClInclude Include="core\Stats.h" />
     <ClInclude Include="enemy\Enemy.h" />
     <ClInclude Include="game\BackgroundSystem.h" />
